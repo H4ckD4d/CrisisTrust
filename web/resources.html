@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>CrisisTrust — Community Resource Verification</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="accessibility.css">
+  <link rel="stylesheet" href="resource-verification.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to resource verification console</a>
+
+  <header class="site-header">
+    <div>
+      <p class="eyebrow">PROJECT h4ckd4d · CRISISTRUST v0.4</p>
+      <h1>Resource Verification</h1>
+      <p id="subtitle" class="subtitle">Community resources with visible source, freshness, capacity, and conflict history.</p>
+    </div>
+    <div class="local-badge"><span class="status-dot" aria-hidden="true"></span><span id="localBadge">Local session only</span></div>
+  </header>
+
+  <main id="main" class="resource-console">
+    <section class="panel" aria-labelledby="resource-boundary-title">
+      <div class="resource-toolbar">
+        <div>
+          <p class="eyebrow">Community Resource Verification</p>
+          <h2 id="resource-boundary-title">A report is not automatically a verified resource.</h2>
+          <p id="boundaryText" class="muted">CrisisTrust keeps source classes, timestamps, conflicts, availability, and capacity visible instead of collapsing them into a single trust badge.</p>
+        </div>
+        <label for="resourceLanguage">
+          <span id="languageLabel">Interface language</span>
+          <select id="resourceLanguage">
+            <option value="en">English</option>
+            <option value="pt-BR">Português (Brasil)</option>
+            <option value="es">Español</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section class="resource-summary" aria-label="Resource verification summary">
+      <div><span id="summaryResourcesLabel">Resources</span><strong id="summaryResources">0</strong></div>
+      <div><span id="summaryVerifiedLabel">Verified</span><strong id="summaryVerified">0</strong></div>
+      <div><span id="summaryConflictLabel">Conflicting</span><strong id="summaryConflicting">0</strong></div>
+      <div><span id="summaryStaleLabel">Stale / unavailable</span><strong id="summaryNeedsReview">0</strong></div>
+    </section>
+
+    <section class="panel">
+      <p id="safetyNote" class="resource-warning">Synthetic demonstration only. Do not treat fixture resources as real emergency services.</p>
+    </section>
+
+    <section id="verifiedResourceGrid" class="resource-grid" aria-live="polite"></section>
+  </main>
+
+  <footer>
+    <div class="signature">
+      <strong>Chris Cruz | h4ckd4d</strong>
+      <span id="ownerLabel">Original creator, project owner, and primary maintainer</span>
+      <span class="founder">Founder — Project h4ckd4d</span>
+      <em>“Protect. Detect. Defend.”</em>
+    </div>
+    <p id="communityInvite">Developers, humanitarian technologists, emergency-management practitioners, accessibility specialists, NGOs, civic-technology teams, QA engineers, and data-model contributors are invited to improve this verification model professionally.</p>
+  </footer>
+
+  <script src="resource-verification-core.js"></script>
+  <script src="resource-verification.js"></script>
+</body>
+</html>
