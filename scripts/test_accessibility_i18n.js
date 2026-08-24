@@ -47,7 +47,13 @@ const unreviewed = { ...pt, translation_id: "CT-TRANS-TEST-UNREVIEWED", translat
 assert.deepStrictEqual(translation.validateTranslation(unreviewed), []);
 assert.strictEqual(translation.statusLabel(unreviewed.translation_status), "machine-assisted / unreviewed");
 
-assert.deepStrictEqual(Object.keys(accessibility.classMap).sort(), ["highContrast", "largeText", "lowBandwidth", "reducedMotion"].sort());
+assert.deepStrictEqual(
+  Object.keys(accessibility.classMap).sort(),
+  ["highContrast", "largeText", "lowBandwidth", "reducedMotion", "simpleLanguage"].sort()
+);
+assert.ok(accessibility.simpleLanguageText.en.includes("original"));
+assert.ok(accessibility.simpleLanguageText["pt-BR"].includes("original"));
+assert.ok(accessibility.simpleLanguageText.es.includes("original"));
 
 const html = fs.readFileSync(path.join(root, "web/index.html"), "utf8");
 for (const required of [
@@ -56,6 +62,8 @@ for (const required of [
   'id="largeTextToggle"',
   'id="reducedMotionToggle"',
   'id="lowBandwidthToggle"',
+  'id="simpleLanguageToggle"',
+  'id="simpleLanguageCompanion"',
   'id="translationView"',
   'aria-live="polite"',
   'data-i18n='
