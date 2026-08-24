@@ -36,11 +36,11 @@
     "observed_at": "2026-08-23T12:00:00Z",
     "verifier_role": "community-report",
     "source_class": "community-report",
-    "availability": "unknown",
-    "capacity": {"status": "unknown"},
+    "availability": "available",
+    "capacity": {"status": "limited", "note": "Synthetic community report says the resource is operating."},
     "accessibility": {"status": "unknown"},
-    "verification_result": "inconclusive",
-    "note": "Synthetic stale community report."
+    "verification_result": "supports",
+    "note": "Synthetic community report used to test conflict preservation."
   },
   {
     "record_type": "resource-verification",
