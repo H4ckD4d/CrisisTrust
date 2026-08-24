@@ -95,7 +95,6 @@ function renderTranslation() {
   status.className = "muted";
   status.textContent = `${translateText("translation.status", "Translation status")}: ${CrisisTrustTranslation.statusLabel(companion.translation_status)} · ${companion.translator_reference}`;
   translated.append(translatedHeading, translatedText, status);
-
   translationView.append(original, translated);
 }
 
@@ -129,4 +128,10 @@ translationDemoPt.addEventListener("click", () => loadTranslation(syntheticTrans
 translationDemoEs.addEventListener("click", () => loadTranslation(syntheticTranslations.es));
 
 document.addEventListener("crisistrust-languagechange", () => renderTranslation());
+document.addEventListener("crisistrust-alertchange", () => {
+  if (activeTranslation && !CrisisTrustTranslation.matchesSource(activeAlert, activeTranslation)) {
+    setTranslationStatus(translateText("translation.mismatch", "Translation rejected because it does not exactly match the loaded source record."), "error");
+  }
+  renderTranslation();
+});
 renderTranslation();
