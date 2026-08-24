@@ -13,13 +13,16 @@ We welcome:
 - privacy/security engineers;
 - humanitarian technologists;
 - disaster-risk and community-resilience specialists;
+- emergency-management practitioners;
+- shelter/resource operators;
+- NGO and civic-technology teams;
+- trained community-verification practitioners;
 - accessibility and inclusive-design specialists;
 - multilingual/localization contributors;
 - UX researchers;
 - QA/test engineers;
 - protocol and data-model engineers;
-- technical writers;
-- NGO and civic-technology practitioners.
+- technical writers.
 
 ## Priority engineering areas
 
@@ -39,13 +42,30 @@ Enable useful check-ins and trusted-circle coordination without continuous track
 
 Develop tested adapters and mappings that preserve CAP semantics rather than rewriting official safety guidance.
 
-### Community resource quality
+### Community resource verification
 
-Improve freshness, verification, moderation, accessibility, and source history for public support resources.
+Help improve:
+
+- resource-type taxonomies;
+- verifier roles and governance;
+- freshness windows by resource type;
+- shelter/cooling/water/charging/medical capacity semantics;
+- accessibility metadata;
+- operator and authority confirmation workflows;
+- community-report corroboration;
+- conflict reconciliation;
+- stale-resource handling;
+- moderation and abuse resistance.
+
+A core v0.4 rule is:
+
+> A single community report is evidence, not automatic verification.
+
+Contributors should preserve source class, timestamp, conflict, and uncertainty rather than optimizing for a visually reassuring status.
 
 ### Offline resilience
 
-Research synchronization patterns for degraded connectivity without silently weakening privacy.
+Research synchronization patterns for degraded connectivity without silently weakening privacy or discarding conflicting verification history.
 
 ## Engineering review standard
 
@@ -59,6 +79,8 @@ Changes should answer:
 - Can it be abused for surveillance or misinformation?
 - How is it tested?
 - What happens when connectivity is unavailable?
+- For resource changes, who supplied the observation and how fresh is it?
+- Can contradictory evidence remain visible?
 
 ## Contributor credit
 
