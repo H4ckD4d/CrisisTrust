@@ -6,23 +6,27 @@
 
 ### Added
 
-- CrisisTrust v0.3 Accessibility & Multilingual profile.
-- English, Portuguese (Brazil), and Spanish interface dictionaries.
-- Session-only high-contrast, larger-text, reduced-motion, low-bandwidth, and simple-language controls.
-- `translation-record` JSON Schema and protocol contract.
-- Portuguese and Spanish synthetic translation fixtures.
-- Exact source-text binding before a companion translation can be displayed.
-- Translation review states including source-provided, human-reviewed, machine-assisted-unreviewed, translator-declared, and unverified.
-- Original + companion translation dashboard presentation with explicit language tags.
-- Accessible TrustCheck presentation in EN/PT-BR/ES while preserving stable protocol state values.
-- Visible keyboard focus and `prefers-reduced-motion` support.
-- Accessibility, i18n, and translation-safety automated tests.
-- Static validation for translation/source mismatch, external runtime dependencies, browser persistence, and geolocation APIs.
-- WCAG 2.2 engineering-reference documentation and BCP 47 language-tag guidance.
+- CrisisTrust v0.4 Community Resource Verification profile.
+- `resource-verification` JSON Schema and protocol contract.
+- Verifier-role and source-class semantics.
+- Derived `verified`, `unverified`, `conflicting`, `stale`, and `unavailable` operational states.
+- Conflict-first aggregation policy that keeps contradictory current evidence visible.
+- Rule preventing a single community report from automatically becoming a verified resource.
+- Configurable freshness-window logic.
+- Capacity and accessibility observation metadata.
+- Synthetic verification-history fixtures.
+- Reusable browser/Node resource-verification engine.
+- EN/PT-BR/ES local Resource Verification Console.
+- Automated resource-verification tests and CI/static-validation coverage.
+- Community resource verification architecture and human-review guidance.
+
+## [0.3.0-alpha.1] - 2026-08-23
+
+Accessibility & Multilingual milestone with EN/PT-BR/ES interface support, translation safety, simple-language companion, accessibility profiles, and automated i18n/accessibility tests.
 
 ## [0.2.0-alpha.1] - 2026-08-23
 
-TrustCheck anti-impersonation verification milestone with independent-channel verification, prearranged-challenge result semantics, Trusted Circle corroboration, high-consequence action warnings, local dashboard integration, and dedicated tests.
+TrustCheck anti-impersonation verification milestone with independent-channel verification, Trusted Circle corroboration, high-consequence action warnings, local dashboard integration, and dedicated tests.
 
 ## [0.1.0-alpha.1] - 2026-08-23
 
