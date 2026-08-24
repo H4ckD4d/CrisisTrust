@@ -6,6 +6,8 @@
 
 ### Added
 
+- Portuguese beginner installation and usage guide covering Windows, Linux, macOS, local startup, testing, updating, and common troubleshooting.
+- README quick-start link for first-time users.
 - CrisisTrust v0.4 Community Resource Verification profile.
 - `resource-verification` JSON Schema and protocol contract.
 - Verifier-role and source-class semantics.
