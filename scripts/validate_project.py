@@ -26,18 +26,25 @@ REQUIRED = [
     "docs/protocol.md",
     "docs/cap-interop.md",
     "docs/threat-model.md",
+    "docs/trustcheck.md",
     "schemas/alert-envelope.schema.json",
     "schemas/action-card.schema.json",
     "schemas/checkin.schema.json",
     "schemas/community-resource.schema.json",
+    "schemas/trustcheck-case.schema.json",
     "examples/alert.synthetic.json",
     "examples/checkins.synthetic.json",
     "examples/resources.synthetic.json",
+    "examples/trustcheck.synthetic.json",
     "web/index.html",
     "web/styles.css",
     "web/core.js",
     "web/app.js",
+    "web/trustcheck.css",
+    "web/trustcheck-core.js",
+    "web/trustcheck.js",
     "scripts/test_core.js",
+    "scripts/test_trustcheck.js",
     "scripts/serve_local.py",
 ]
 
@@ -58,6 +65,22 @@ FORBIDDEN_PERSON_TRACKING_KEYS = {
     "device_id",
     "advertising_id",
     "location_history",
+}
+
+FORBIDDEN_TRUSTCHECK_KEYS = {
+    "phone_number",
+    "email_address",
+    "password",
+    "recovery_code",
+    "payment_card",
+    "bank_account",
+    "secret_value",
+    "challenge_secret",
+    "voice_recording",
+    "face_image",
+    "latitude",
+    "longitude",
+    "coordinates",
 }
 
 
@@ -117,7 +140,24 @@ def main() -> int:
                 if forbidden:
                     errors.append(f"check-in fixture #{index} contains personal-tracking keys: {forbidden}")
 
-    web_files = [ROOT / "web" / "index.html", ROOT / "web" / "core.js", ROOT / "web" / "app.js"]
+    trustcheck = loaded.get("trustcheck.synthetic.json")
+    if isinstance(trustcheck, dict):
+        if trustcheck.get("record_type") != "trustcheck-case":
+            errors.append("synthetic TrustCheck fixture must be a trustcheck-case")
+        if trustcheck.get("protocol_version") != "0.2":
+            errors.append("synthetic TrustCheck fixture must use protocol_version 0.2")
+        if trustcheck.get("verification_state") not in {
+            "unreviewed", "verifying", "verified-by-process", "unresolved", "conflicting", "cancelled"
+        }:
+            errors.append("synthetic TrustCheck fixture has invalid verification_state")
+        forbidden = sorted(set(walk_keys(trustcheck)) & FORBIDDEN_TRUSTCHECK_KEYS)
+        if forbidden:
+            errors.append(f"synthetic TrustCheck fixture contains forbidden sensitive keys: {forbidden}")
+        challenge = trustcheck.get("challenge", {})
+        if isinstance(challenge, dict) and any("secret" in key.lower() for key in challenge):
+            errors.append("TrustCheck challenge must record only prearranged/result metadata, never the secret")
+
+    web_files = [ROOT / "web" / "index.html", *sorted((ROOT / "web").glob("*.js"))]
     web_text = {path.name: path.read_text(encoding="utf-8") for path in web_files if path.is_file()}
     for filename, text in web_text.items():
         for token in FORBIDDEN_WEB_TOKENS:
@@ -131,6 +171,10 @@ def main() -> int:
         "Chris Cruz | h4ckd4d",
         "Trusted Circle",
         "Community resources",
+        "TrustCheck v0.2",
+        "Urgency is not evidence",
+        "verified-by-process",
+        "Voice, caller ID",
     ]:
         if required_text.lower() not in html.lower():
             errors.append(f"web/index.html missing required safety/branding text: {required_text}")
