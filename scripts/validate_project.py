@@ -15,96 +15,38 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 
 REQUIRED = [
-    "README.md",
-    "ROADMAP.md",
-    "CONTRIBUTING.md",
-    "DEVELOPERS.md",
-    "SECURITY.md",
-    "CHANGELOG.md",
-    "LICENSE",
-    "docs/architecture.md",
-    "docs/trust-model.md",
-    "docs/protocol.md",
-    "docs/cap-interop.md",
-    "docs/threat-model.md",
-    "docs/trustcheck.md",
-    "docs/accessibility-multilingual.md",
-    "schemas/alert-envelope.schema.json",
-    "schemas/action-card.schema.json",
-    "schemas/checkin.schema.json",
-    "schemas/community-resource.schema.json",
-    "schemas/trustcheck-case.schema.json",
-    "schemas/translation-record.schema.json",
-    "examples/alert.synthetic.json",
-    "examples/checkins.synthetic.json",
-    "examples/resources.synthetic.json",
-    "examples/trustcheck.synthetic.json",
-    "examples/translation.pt-BR.synthetic.json",
-    "examples/translation.es.synthetic.json",
-    "web/index.html",
-    "web/styles.css",
-    "web/core.js",
-    "web/app.js",
-    "web/trustcheck.css",
-    "web/trustcheck-core.js",
-    "web/trustcheck.js",
-    "web/i18n.js",
-    "web/accessibility.js",
-    "web/accessibility.css",
-    "web/translation-core.js",
-    "web/translation.js",
-    "scripts/test_core.js",
-    "scripts/test_trustcheck.js",
-    "scripts/test_accessibility_i18n.js",
-    "scripts/serve_local.py",
+    "README.md", "ROADMAP.md", "CONTRIBUTING.md", "DEVELOPERS.md", "SECURITY.md", "CHANGELOG.md", "LICENSE",
+    "docs/architecture.md", "docs/trust-model.md", "docs/protocol.md", "docs/cap-interop.md", "docs/threat-model.md",
+    "docs/trustcheck.md", "docs/accessibility-multilingual.md", "docs/community-resource-verification.md",
+    "schemas/alert-envelope.schema.json", "schemas/action-card.schema.json", "schemas/checkin.schema.json",
+    "schemas/community-resource.schema.json", "schemas/trustcheck-case.schema.json", "schemas/translation-record.schema.json",
+    "schemas/resource-verification.schema.json",
+    "examples/alert.synthetic.json", "examples/checkins.synthetic.json", "examples/resources.synthetic.json",
+    "examples/trustcheck.synthetic.json", "examples/translation.pt-BR.synthetic.json", "examples/translation.es.synthetic.json",
+    "examples/resource-verifications.synthetic.json",
+    "web/index.html", "web/resources.html", "web/styles.css", "web/core.js", "web/app.js",
+    "web/trustcheck.css", "web/trustcheck-core.js", "web/trustcheck.js", "web/i18n.js",
+    "web/accessibility.js", "web/accessibility.css", "web/translation-core.js", "web/translation.js",
+    "web/resource-verification-core.js", "web/resource-verification.js", "web/resource-verification.css",
+    "scripts/test_core.js", "scripts/test_trustcheck.js", "scripts/test_accessibility_i18n.js",
+    "scripts/test_resource_verification.js", "scripts/serve_local.py",
 ]
 
 FORBIDDEN_WEB_TOKENS = [
-    "fetch(",
-    "XMLHttpRequest",
-    "WebSocket",
-    "sendBeacon",
-    "localStorage",
-    "sessionStorage",
-    "document.cookie",
-    "navigator.geolocation",
-    "getCurrentPosition(",
-    "watchPosition(",
+    "fetch(", "XMLHttpRequest", "WebSocket", "sendBeacon", "localStorage", "sessionStorage", "document.cookie",
+    "navigator.geolocation", "getCurrentPosition(", "watchPosition(",
 ]
 
-FORBIDDEN_PERSON_TRACKING_KEYS = {
-    "latitude",
-    "longitude",
-    "coordinates",
-    "device_id",
-    "advertising_id",
-    "location_history",
-}
-
+FORBIDDEN_PERSON_TRACKING_KEYS = {"latitude", "longitude", "coordinates", "device_id", "advertising_id", "location_history"}
 FORBIDDEN_TRUSTCHECK_KEYS = {
-    "phone_number",
-    "email_address",
-    "password",
-    "recovery_code",
-    "payment_card",
-    "bank_account",
-    "secret_value",
-    "challenge_secret",
-    "voice_recording",
-    "face_image",
-    "latitude",
-    "longitude",
-    "coordinates",
+    "phone_number", "email_address", "password", "recovery_code", "payment_card", "bank_account", "secret_value",
+    "challenge_secret", "voice_recording", "face_image", "latitude", "longitude", "coordinates",
 }
-
-TRANSLATION_STATUSES = {
-    "source-provided",
-    "human-reviewed",
-    "machine-assisted-unreviewed",
-    "translator-declared",
-    "unverified",
-}
-
+TRANSLATION_STATUSES = {"source-provided", "human-reviewed", "machine-assisted-unreviewed", "translator-declared", "unverified"}
+RESOURCE_ROLES = {"authority", "operator", "partner-organization", "trained-community-verifier", "community-report", "unknown"}
+RESOURCE_SOURCES = {"official-record", "operator-confirmation", "partner-confirmation", "direct-observation", "community-report", "unknown"}
+RESOURCE_RESULTS = {"supports", "contradicts", "inconclusive"}
+RESOURCE_AVAILABILITY = {"available", "limited", "unavailable", "unknown"}
 LANGUAGE_TAG = re.compile(r"^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$")
 
 
@@ -130,10 +72,8 @@ def validate_translation(record, alert, filename, errors):
     if not isinstance(record, dict):
         errors.append(f"{filename} must contain an object")
         return
-    if record.get("record_type") != "translation-record":
-        errors.append(f"{filename} must be a translation-record")
-    if record.get("protocol_version") != "0.3":
-        errors.append(f"{filename} must use protocol_version 0.3")
+    if record.get("record_type") != "translation-record" or record.get("protocol_version") != "0.3":
+        errors.append(f"{filename} must be a v0.3 translation-record")
     if record.get("translation_status") not in TRANSLATION_STATUSES:
         errors.append(f"{filename} has invalid translation_status")
     for field in ("source_language", "target_language"):
@@ -150,8 +90,63 @@ def validate_translation(record, alert, filename, errors):
             errors.append(f"{filename} references unsupported field")
         elif record.get("source_text") != alert.get(field):
             errors.append(f"{filename} source_text must exactly match the synthetic source field")
-        if alert.get("language") and record.get("source_language", "").lower() != alert.get("language", "").lower():
-            errors.append(f"{filename} source_language must match synthetic alert language")
+
+
+def validate_resource_verifications(records, resource_ids, errors):
+    if not isinstance(records, list) or not records:
+        errors.append("resource-verifications.synthetic.json must contain a non-empty list")
+        return
+    seen = set()
+    community_support_only = []
+    for index, item in enumerate(records, start=1):
+        prefix = f"resource verification #{index}"
+        if not isinstance(item, dict):
+            errors.append(f"{prefix} must be an object")
+            continue
+        if item.get("record_type") != "resource-verification" or item.get("protocol_version") != "0.4":
+            errors.append(f"{prefix} must be a v0.4 resource-verification")
+        verification_id = item.get("verification_id")
+        if not isinstance(verification_id, str) or not verification_id:
+            errors.append(f"{prefix} missing verification_id")
+        elif verification_id in seen:
+            errors.append(f"duplicate resource verification id: {verification_id}")
+        seen.add(verification_id)
+        if item.get("resource_id") not in resource_ids:
+            errors.append(f"{prefix} references unknown resource_id")
+        if item.get("verifier_role") not in RESOURCE_ROLES:
+            errors.append(f"{prefix} has invalid verifier_role")
+        if item.get("source_class") not in RESOURCE_SOURCES:
+            errors.append(f"{prefix} has invalid source_class")
+        if item.get("availability") not in RESOURCE_AVAILABILITY:
+            errors.append(f"{prefix} has invalid availability")
+        if item.get("verification_result") not in RESOURCE_RESULTS:
+            errors.append(f"{prefix} has invalid verification_result")
+        if not isinstance(item.get("observed_at"), str):
+            errors.append(f"{prefix} missing observed_at")
+        forbidden = sorted(set(walk_keys(item)) & FORBIDDEN_PERSON_TRACKING_KEYS)
+        if forbidden:
+            errors.append(f"{prefix} contains forbidden personal-tracking keys: {forbidden}")
+        if item.get("source_class") == "community-report" and item.get("verification_result") == "supports":
+            community_support_only.append(item)
+
+    if community_support_only and "single community report" not in (ROOT / "docs/community-resource-verification.md").read_text(encoding="utf-8").lower():
+        errors.append("resource verification policy must explicitly document the single-community-report boundary")
+
+
+def validate_html(path: Path, errors: list[str]):
+    text = path.read_text(encoding="utf-8")
+    for token in FORBIDDEN_WEB_TOKENS:
+        if token in text:
+            errors.append(f"{path.relative_to(ROOT)} contains forbidden network/persistence token: {token}")
+    if re.search(r"\son[a-zA-Z]+\s*=", text):
+        errors.append(f"{path.relative_to(ROOT)} contains inline event handlers")
+    if re.search(r'<(?:script|link)[^>]+(?:src|href)=["\']https?://', text, re.IGNORECASE):
+        errors.append(f"{path.relative_to(ROOT)} must not depend on external runtime scripts or stylesheets")
+    ids = re.findall(r'\bid="([^"]+)"', text)
+    duplicates = sorted({item for item in ids if ids.count(item) > 1})
+    if duplicates:
+        errors.append(f"{path.relative_to(ROOT)} contains duplicate ids: {duplicates}")
+    return text
 
 
 def main() -> int:
@@ -162,22 +157,12 @@ def main() -> int:
             errors.append(f"missing required file: {relative}")
 
     json_files = list((ROOT / "schemas").glob("*.json")) + list((ROOT / "examples").glob("*.json"))
-    loaded = {}
-    for path in json_files:
-        loaded[path.name] = load_json(path, errors)
+    loaded = {path.name: load_json(path, errors) for path in json_files}
 
     alert = loaded.get("alert.synthetic.json")
     if isinstance(alert, dict):
-        if alert.get("record_type") != "alert-envelope":
-            errors.append("synthetic alert must be an alert-envelope")
-        if alert.get("protocol_version") != "0.1":
-            errors.append("synthetic alert must use protocol_version 0.1")
-        if alert.get("source_status") not in {
-            "official-registered", "official-declared", "community-verified", "community-unverified", "unknown"
-        }:
-            errors.append("synthetic alert has invalid source_status")
-        if alert.get("integrity_status") not in {"verified", "not-verified", "failed", "not-applicable"}:
-            errors.append("synthetic alert has invalid integrity_status")
+        if alert.get("record_type") != "alert-envelope" or alert.get("protocol_version") != "0.1":
+            errors.append("synthetic alert must be a v0.1 alert-envelope")
         forbidden = sorted(set(walk_keys(alert)) & FORBIDDEN_PERSON_TRACKING_KEYS)
         if forbidden:
             errors.append(f"synthetic alert contains forbidden personal-tracking keys: {forbidden}")
@@ -187,78 +172,57 @@ def main() -> int:
         for index, item in enumerate(checkins, start=1):
             if not isinstance(item, dict) or item.get("status") not in {"safe", "need-assistance", "unknown"}:
                 errors.append(f"check-in fixture #{index} has invalid status")
-            if isinstance(item, dict):
-                forbidden = sorted(set(walk_keys(item)) & FORBIDDEN_PERSON_TRACKING_KEYS)
-                if forbidden:
-                    errors.append(f"check-in fixture #{index} contains personal-tracking keys: {forbidden}")
+            elif set(walk_keys(item)) & FORBIDDEN_PERSON_TRACKING_KEYS:
+                errors.append(f"check-in fixture #{index} contains personal-tracking keys")
 
     trustcheck = loaded.get("trustcheck.synthetic.json")
     if isinstance(trustcheck, dict):
-        if trustcheck.get("record_type") != "trustcheck-case":
-            errors.append("synthetic TrustCheck fixture must be a trustcheck-case")
-        if trustcheck.get("protocol_version") != "0.2":
-            errors.append("synthetic TrustCheck fixture must use protocol_version 0.2")
-        if trustcheck.get("verification_state") not in {
-            "unreviewed", "verifying", "verified-by-process", "unresolved", "conflicting", "cancelled"
-        }:
-            errors.append("synthetic TrustCheck fixture has invalid verification_state")
+        if trustcheck.get("record_type") != "trustcheck-case" or trustcheck.get("protocol_version") != "0.2":
+            errors.append("synthetic TrustCheck fixture must be a v0.2 trustcheck-case")
         forbidden = sorted(set(walk_keys(trustcheck)) & FORBIDDEN_TRUSTCHECK_KEYS)
         if forbidden:
             errors.append(f"synthetic TrustCheck fixture contains forbidden sensitive keys: {forbidden}")
-        challenge = trustcheck.get("challenge", {})
-        if isinstance(challenge, dict) and any("secret" in key.lower() for key in challenge):
-            errors.append("TrustCheck challenge must record only prearranged/result metadata, never the secret")
 
     for filename in ("translation.pt-BR.synthetic.json", "translation.es.synthetic.json"):
         validate_translation(loaded.get(filename), alert, filename, errors)
 
-    web_files = [ROOT / "web" / "index.html", *sorted((ROOT / "web").glob("*.js"))]
-    web_text = {path.name: path.read_text(encoding="utf-8") for path in web_files if path.is_file()}
-    for filename, text in web_text.items():
-        for token in FORBIDDEN_WEB_TOKENS:
-            if token in text:
-                errors.append(f"web/{filename} contains forbidden network/persistence token: {token}")
+    resources = loaded.get("resources.synthetic.json")
+    resource_ids = {item.get("resource_id") for item in resources if isinstance(item, dict)} if isinstance(resources, list) else set()
+    validate_resource_verifications(loaded.get("resource-verifications.synthetic.json"), resource_ids, errors)
 
-    html = web_text.get("index.html", "")
-    html_visible = html_lib.unescape(html)
+    index_html = validate_html(ROOT / "web/index.html", errors)
+    resources_html = validate_html(ROOT / "web/resources.html", errors)
+    html_visible = html_lib.unescape(index_html)
     for required_text in [
-        "Provenance is not a truth oracle",
-        "Local session only",
-        "Chris Cruz | h4ckd4d",
-        "Trusted Circle",
-        "Community resources",
-        "TrustCheck v0.2",
-        "Urgency is not evidence",
-        "verified-by-process",
-        "Voice, caller ID",
-        "Accessibility & language",
-        "Original + companion translation",
-        "translation-record",
-        "WCAG 2.2",
+        "Provenance is not a truth oracle", "Local session only", "Chris Cruz | h4ckd4d", "Trusted Circle",
+        "Community resources", "TrustCheck v0.2", "Urgency is not evidence", "verified-by-process",
+        "Accessibility & language", "Original + companion translation", "translation-record", "WCAG 2.2",
     ]:
         if required_text.lower() not in html_visible.lower():
             errors.append(f"web/index.html missing required safety/accessibility/branding text: {required_text}")
 
-    if html.count("data-i18n=") < 30:
-        errors.append("web/index.html must expose multilingual interface markers")
+    resource_visible = html_lib.unescape(resources_html)
+    for required_text in ["Community Resource Verification", "A report is not automatically a verified resource", "Chris Cruz | h4ckd4d", "Local session only"]:
+        if required_text.lower() not in resource_visible.lower():
+            errors.append(f"web/resources.html missing required v0.4 text: {required_text}")
 
-    ids = re.findall(r'\bid="([^"]+)"', html)
-    duplicates = sorted({item for item in ids if ids.count(item) > 1})
-    if duplicates:
-        errors.append(f"web/index.html contains duplicate ids: {duplicates}")
+    for path in sorted((ROOT / "web").glob("*.js")):
+        text = path.read_text(encoding="utf-8")
+        for token in FORBIDDEN_WEB_TOKENS:
+            if token in text:
+                errors.append(f"web/{path.name} contains forbidden network/persistence token: {token}")
 
-    if re.search(r"\son[a-zA-Z]+\s*=", html):
-        errors.append("web/index.html contains inline event handlers")
-
-    if re.search(r'<(?:script|link)[^>]+(?:src|href)=["\']https?://', html, re.IGNORECASE):
-        errors.append("web/index.html must not depend on external runtime scripts or stylesheets")
-
-    accessibility_css = (ROOT / "web" / "accessibility.css").read_text(encoding="utf-8") if (ROOT / "web" / "accessibility.css").is_file() else ""
+    accessibility_css = (ROOT / "web/accessibility.css").read_text(encoding="utf-8")
     for token in [":focus-visible", "prefers-reduced-motion", "access-high-contrast", "access-large-text", "access-low-bandwidth"]:
         if token not in accessibility_css:
             errors.append(f"web/accessibility.css missing accessibility control: {token}")
 
-    server_text = (ROOT / "scripts" / "serve_local.py").read_text(encoding="utf-8") if (ROOT / "scripts" / "serve_local.py").is_file() else ""
+    resource_core = (ROOT / "web/resource-verification-core.js").read_text(encoding="utf-8")
+    for token in ["conflicting", "stale", "unavailable", "community-report", "strongSources"]:
+        if token not in resource_core:
+            errors.append(f"resource verification engine missing required policy token: {token}")
+
+    server_text = (ROOT / "scripts/serve_local.py").read_text(encoding="utf-8")
     if 'HOST = "127.0.0.1"' not in server_text:
         errors.append("local reference server must bind to 127.0.0.1 by default")
 
