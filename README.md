@@ -6,6 +6,28 @@
 
 **CrisisTrust** is an open-source, privacy-first project for turning urgent information into **source-aware, accessible, protective action** during crises.
 
+## Start here — installation and beginner guide
+
+New to GitHub, Python, or local development?
+
+**Português (Brasil):** [`docs/GUIA-INSTALACAO-USO.pt-BR.md`](docs/GUIA-INSTALACAO-USO.pt-BR.md)
+
+The guide includes Windows, Linux, and macOS installation; Python/Node/Git setup; local startup; dashboard usage; language switching; TrustCheck; Community Resource Verification; automated tests; updating with Git; and troubleshooting for common errors such as `Python was not found`, `Could not resolve host: github.com`, `cannot spawn less`, browser cache, port conflicts, and the harmless `favicon.ico 404` request.
+
+Quick start after Git and Python are installed:
+
+```bash
+git clone https://github.com/H4ckD4d/CrisisTrust.git
+cd CrisisTrust
+python scripts/serve_local.py
+```
+
+Then open:
+
+```text
+http://127.0.0.1:8771
+```
+
 ## Mission
 
 > When people are afraid, information must become trust — and trust must become safe action.
