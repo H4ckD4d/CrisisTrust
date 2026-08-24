@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://crisistrust.example/schemas/resource-verification.schema.json",
+  "title": "CrisisTrust Resource Verification",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_type",
+    "protocol_version",
+    "verification_id",
+    "resource_id",
+    "observed_at",
+    "verifier_role",
+    "source_class",
+    "availability",
+    "verification_result"
+  ],
+  "properties": {
+    "record_type": {"const": "resource-verification"},
+    "protocol_version": {"const": "0.4"},
+    "verification_id": {"type": "string", "minLength": 5},
+    "resource_id": {"type": "string", "minLength": 3},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "verifier_role": {
+      "enum": ["authority", "operator", "partner-organization", "trained-community-verifier", "community-report", "unknown"]
+    },
+    "source_class": {
+      "enum": ["official-record", "operator-confirmation", "partner-confirmation", "direct-observation", "community-report", "unknown"]
+    },
+    "availability": {"enum": ["available", "limited", "unavailable", "unknown"]},
+    "capacity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {"enum": ["available", "limited", "full", "unknown"]},
+        "value": {"type": "integer", "minimum": 0},
+        "unit": {"type": "string", "maxLength": 60},
+        "note": {"type": "string", "maxLength": 300}
+      }
+    },
+    "accessibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {"enum": ["confirmed", "partial", "unknown"]},
+        "note": {"type": "string", "maxLength": 300}
+      }
+    },
+    "verification_result": {"enum": ["supports", "contradicts", "inconclusive"]},
+    "evidence_reference": {"type": "string", "maxLength": 300},
+    "note": {"type": "string", "maxLength": 500}
+  }
+}
