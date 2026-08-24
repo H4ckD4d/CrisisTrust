@@ -32,13 +32,23 @@ Voice, caller ID, profile photos, emotional pressure, public personal facts, and
 
 ## v0.3 — Accessibility & Multilingual
 
-- translation architecture;
-- simple-language companion text;
-- screen-reader testing;
-- low-bandwidth mode;
-- visual-accessibility profiles;
-- humanitarian terminology review;
-- accessible TrustCheck decision flow.
+- [x] English, Portuguese (Brazil), and Spanish interface architecture;
+- [x] BCP 47 style language tags for translation records;
+- [x] separate `translation-record` protocol contract;
+- [x] exact source-text binding before companion translations are displayed;
+- [x] visible translation review states;
+- [x] simple-language companion text without rewriting source instructions;
+- [x] keyboard-visible focus treatment;
+- [x] screen-reader-oriented semantic/live-region improvements;
+- [x] reduced-motion profile and `prefers-reduced-motion` support;
+- [x] high-contrast profile;
+- [x] larger-text profile;
+- [x] low-bandwidth presentation mode;
+- [x] accessible TrustCheck presentation in EN/PT-BR/ES;
+- [x] automated i18n, translation-safety, and accessibility structure tests;
+- [x] WCAG 2.2 engineering reference documented without claiming certification.
+
+Human testing with assistive technology and broader humanitarian terminology review remain ongoing community activities rather than claimed automated conformance.
 
 ## v0.4 — Community Resource Verification
 
@@ -76,6 +86,7 @@ Stable contracts for:
 - Action Card;
 - check-in;
 - TrustCheck case;
+- translation record;
 - community resources;
 - protocol version negotiation;
 - integrity extensions;

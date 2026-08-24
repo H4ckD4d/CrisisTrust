@@ -1,4 +1,4 @@
-# CrisisTrust Protocol v0.2
+# CrisisTrust Protocol v0.3
 
 **Status:** Alpha draft  
 **Project owner:** Chris Cruz | h4ckd4d
@@ -9,13 +9,14 @@ The CrisisTrust Protocol defines interoperable safety records that can be implem
 
 ## Record types
 
-v0.2 defines five record types:
+v0.3 defines six record types:
 
 1. `alert-envelope`
 2. `action-card`
 3. `checkin`
 4. `community-resource`
 5. `trustcheck-case`
+6. `translation-record`
 
 Each type has a JSON Schema under `schemas/`.
 
@@ -55,8 +56,9 @@ Optional fields may include effective/expiry timestamps, language, CAP identifie
 | `certainty` | `certainty` |
 | `area_description` | `areaDesc` |
 | `instruction` | `instruction` |
+| `language` | `language` |
 
-CrisisTrust adds explicit provenance/integrity fields because consumers need to know not only what an alert says, but what evidence supports the issuer attribution and message integrity.
+CrisisTrust adds explicit provenance/integrity fields because consumers need to know not only what an alert says, but what evidence supports issuer attribution and message integrity.
 
 ## 2. Action Card
 
@@ -71,9 +73,12 @@ It must preserve:
 - severity/urgency/certainty;
 - affected-area description;
 - source instruction;
+- source language;
 - freshness/expiry state.
 
-**Critical rule:** Action Cards must not silently replace authoritative instructions with LLM-generated emergency instructions.
+**Critical rule:** Action Cards must not silently replace authoritative instructions with LLM-generated, translated, simplified, or otherwise rewritten emergency instructions.
+
+Companion translations and simple-language explanations must remain distinguishable from the source instruction.
 
 ## 3. Check-in
 
@@ -102,16 +107,7 @@ No precise location is required.
 
 A resource record describes a public service/resource location. It is not a person-tracking record.
 
-Required concepts:
-
-- resource identifier;
-- resource type;
-- display name;
-- area/address description;
-- source;
-- verification status;
-- last verification time when available;
-- availability note.
+Required concepts include resource identifier, resource type, display name, area/address description, source, verification status, verification time when available, and availability note.
 
 ## 5. TrustCheck case
 
@@ -151,19 +147,89 @@ Verification states are:
 
 Conflicting evidence must not be averaged away.
 
-### Signals that do not authenticate by themselves
-
-The protocol does not treat these as sufficient identity proof:
-
-- familiar voice;
-- caller ID;
-- display name;
-- profile photograph;
-- urgency or emotional pressure;
-- public personal facts;
-- AI-generated identity confidence.
+The protocol does not treat familiar voice, caller ID, display names, profile photographs, urgency, public personal facts, or AI-generated identity confidence as sufficient identity proof.
 
 See [`trustcheck.md`](trustcheck.md).
+
+## 6. Translation record
+
+A translation record is a companion record. It does not mutate or replace its source record.
+
+Required concepts:
+
+```text
+record_type = translation-record
+protocol_version = 0.3
+translation_id
+subject_id
+field
+source_language
+target_language
+source_text
+translated_text
+translation_status
+```
+
+The supported core fields are:
+
+- `event`;
+- `description`;
+- `instruction`;
+- `area_description`.
+
+### Language tags
+
+CrisisTrust v0.3 translation records use well-formed BCP 47 style language tags such as:
+
+```text
+en
+pt-BR
+es
+fr-CA
+zh-Hant
+```
+
+CAP source-language metadata is preserved. A translation record describes an additional companion representation.
+
+### Translation status
+
+Allowed values are:
+
+- `source-provided`;
+- `human-reviewed`;
+- `machine-assisted-unreviewed`;
+- `translator-declared`;
+- `unverified`.
+
+A translation status describes provenance/review state. It is not a guarantee of perfect linguistic accuracy.
+
+### Source binding rule
+
+A reference client must not attach a translation to a source record unless:
+
+1. `subject_id` identifies the loaded source record;
+2. the declared field exists in that source record;
+3. `source_text` exactly equals that source field;
+4. declared source language matches the source language when available.
+
+A mismatch must remain visible as a rejection rather than being silently corrected.
+
+See [`accessibility-multilingual.md`](accessibility-multilingual.md).
+
+## Accessibility profile
+
+The v0.3 reference implementation provides session-only language and accessibility preferences. WCAG 2.2 is used as an engineering reference, not as a claim of independent certification.
+
+Reference-client controls include:
+
+- interface language;
+- high contrast;
+- larger text;
+- reduced motion;
+- low-bandwidth presentation;
+- simple-language companion explanations.
+
+Simple-language companion text must not replace the source instruction.
 
 ## Versioning
 
@@ -172,7 +238,7 @@ Protocol versions use semantic milestone numbering during incubation:
 ```text
 0.1 — alert/provenance foundation
 0.2 — TrustCheck anti-impersonation workflow
-0.3 — accessibility and multilingual profile
+0.3 — accessibility, multilingual, and translation-safety profile
 0.4 — community-resource verification profile
 0.5 — offline synchronization draft
 1.0 — stable interoperability contract
@@ -197,7 +263,8 @@ A compliant reference client should not require:
 - recovery codes;
 - voice recordings;
 - face images;
-- biometric identity inference.
+- biometric identity inference;
+- online translation-service submission.
 
 ## Safety policy
 

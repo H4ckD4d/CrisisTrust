@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://crisistrust.example/schemas/translation-record.schema.json",
+  "title": "CrisisTrust Translation Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_type",
+    "protocol_version",
+    "translation_id",
+    "subject_id",
+    "field",
+    "source_language",
+    "target_language",
+    "source_text",
+    "translated_text",
+    "translation_status"
+  ],
+  "properties": {
+    "record_type": {"const": "translation-record"},
+    "protocol_version": {"const": "0.3"},
+    "translation_id": {"type": "string", "minLength": 3},
+    "subject_id": {"type": "string", "minLength": 3},
+    "field": {"enum": ["event", "description", "instruction", "area_description"]},
+    "source_language": {
+      "type": "string",
+      "pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$"
+    },
+    "target_language": {
+      "type": "string",
+      "pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$"
+    },
+    "source_text": {"type": "string", "minLength": 1},
+    "translated_text": {"type": "string", "minLength": 1},
+    "translation_status": {
+      "enum": [
+        "source-provided",
+        "human-reviewed",
+        "machine-assisted-unreviewed",
+        "translator-declared",
+        "unverified"
+      ]
+    },
+    "translator_reference": {"type": "string", "minLength": 1},
+    "translated_at": {"type": "string", "format": "date-time"},
+    "notes": {"type": "string"}
+  }
+}

@@ -15,7 +15,7 @@ Where did this information come from?
         ↓
 What does the official source actually say?
         ↓
-What protective action is recommended?
+Can I understand it in my language without losing the original?
         ↓
 Is an urgent personal claim independently corroborated?
         ↓
@@ -30,19 +30,19 @@ What verified community resources are available?
 
 CrisisTrust is designed for disasters, extreme weather, public warnings, family check-ins, community resilience, emergency-information verification, and high-pressure impersonation scenarios. It does not replace emergency authorities, emergency services, identity-assurance systems, payment authorization, or professional advice.
 
-## v0.1 foundation
+## v0.1 — Protocol foundation
 
-The first milestone established five capabilities:
+The first milestone established:
 
-1. **AlertTrust** — ingest a normalized alert envelope derived from an official alert source, including CAP-compatible fields.
-2. **Source Provenance** — record who issued an alert, how the source was identified, and whether message integrity was checked.
-3. **Action Cards** — display the instruction provided by the authoritative source without inventing new emergency guidance.
-4. **Trusted Circle Check-in** — session-only `safe`, `need-assistance`, or `unknown` status without permanent location tracking.
-5. **Community Resources** — structured resources such as shelters, cooling centers, charging points, or official information points with source and verification metadata.
+1. **AlertTrust** — normalized alert envelopes with CAP-compatible concepts.
+2. **Source Provenance** — source and integrity evidence remain visible.
+3. **Action Cards** — authoritative instructions remain preserved.
+4. **Trusted Circle Check-in** — session-only safety status without permanent location tracking.
+5. **Community Resources** — source-aware public support resources with freshness metadata.
 
-## v0.2 TrustCheck
+## v0.2 — TrustCheck
 
-TrustCheck adds a conservative verification workflow for urgent family, financial, or account-security claims.
+TrustCheck adds a conservative anti-impersonation workflow for urgent family, financial, or account-security claims.
 
 ```text
 Urgent claim
@@ -62,11 +62,63 @@ verified-by-process / unresolved / conflicting
 
 A case reaches `verified-by-process` only when an independently initiated known/official channel confirms the claim, a second trusted corroboration is present, and no material verification result conflicts with the claim.
 
-`verified-by-process` is not a guarantee of identity, factual accuracy, or safety. It means the documented TrustCheck process reached its defined corroboration threshold.
-
-TrustCheck deliberately does **not** use familiar voice, caller ID, profile photos, display names, emotional pressure, public personal facts, or AI-generated identity confidence as sufficient authentication.
+`verified-by-process` is not a guarantee of identity, factual accuracy, or safety.
 
 See [`docs/trustcheck.md`](docs/trustcheck.md).
+
+## v0.3 — Accessibility & Multilingual
+
+v0.3 makes the reference client usable across more languages, abilities, devices, and connectivity conditions while protecting the original emergency message.
+
+### Interface languages
+
+- English — `en`
+- Portuguese (Brazil) — `pt-BR`
+- Spanish — `es`
+
+### Accessibility profiles
+
+The local dashboard now includes session-only controls for:
+
+- high contrast;
+- larger text;
+- reduced motion;
+- low-bandwidth presentation;
+- simple-language companion text.
+
+The project uses **WCAG 2.2** as an engineering and review reference. CrisisTrust does not claim formal accessibility certification without independent conformance testing.
+
+### Translation safety
+
+Translations are represented as separate `translation-record` objects.
+
+```text
+Original source instruction
+          │
+          ├───────────────┐
+          ▼               ▼
+     Original text   Companion translation
+          │               │
+          │        language + review status
+          │               │
+          └───────┬───────┘
+                  ▼
+       both remain visible
+```
+
+A companion translation is accepted only when its `subject_id`, source field, source language, and `source_text` match the loaded source record. It never replaces the original source instruction.
+
+Translation review states include:
+
+- `source-provided`;
+- `human-reviewed`;
+- `machine-assisted-unreviewed`;
+- `translator-declared`;
+- `unverified`.
+
+New translation records use BCP 47 style language tags. CAP source-language semantics remain preserved.
+
+See [`docs/accessibility-multilingual.md`](docs/accessibility-multilingual.md).
 
 ## Human-safety principles
 
@@ -74,13 +126,14 @@ See [`docs/trustcheck.md`](docs/trustcheck.md).
 2. Verified provenance before virality.
 3. Official instructions before generated advice.
 4. Independent verification before high-consequence action.
-5. Privacy before tracking.
-6. Consent before location sharing.
-7. Accessibility by default.
-8. Offline resilience where possible.
-9. No advertising during suffering.
-10. No sale of crisis data.
-11. Open standards before vendor lock-in.
+5. Original source text before translation substitution.
+6. Privacy before tracking.
+7. Consent before location sharing.
+8. Accessibility by default.
+9. Offline resilience where possible.
+10. No advertising during suffering.
+11. No sale of crisis data.
+12. Open standards before vendor lock-in.
 
 ## What CrisisTrust does not do
 
@@ -89,6 +142,9 @@ CrisisTrust does not:
 - claim that AI can determine whether an emergency is true;
 - claim that voice, caller ID, or a photograph proves identity;
 - replace government or emergency-service instructions;
+- silently overwrite authoritative text with a translation;
+- call an online translation provider from the reference client;
+- infer a user's native language;
 - continuously track people;
 - collect precise personal location by default;
 - sell crisis or family data;
@@ -110,7 +166,11 @@ Normalized Alert Envelope                      TrustCheck Case
           ↓                                         ↓
 CAP-Compatible Semantics                 Corroboration / Conflict
           ↓                                         ↓
-Human-readable Action Card             Verification State
+Original Action Card                     Verification State
+          │                                         │
+          ├──── translation-record ────┐            │
+          │                            ▼            │
+          │                 Companion Translation   │
           └──────────────────┬──────────────────────┘
                              ↓
                  Trusted Circle + Community Resources
@@ -118,19 +178,19 @@ Human-readable Action Card             Verification State
                   User-controlled protective action
 ```
 
-See [`docs/architecture.md`](docs/architecture.md), [`docs/trust-model.md`](docs/trust-model.md), [`docs/protocol.md`](docs/protocol.md), and [`docs/trustcheck.md`](docs/trustcheck.md).
+See [`docs/architecture.md`](docs/architecture.md), [`docs/trust-model.md`](docs/trust-model.md), [`docs/protocol.md`](docs/protocol.md), [`docs/trustcheck.md`](docs/trustcheck.md), and [`docs/accessibility-multilingual.md`](docs/accessibility-multilingual.md).
 
 ## Standards foundation
 
-CrisisTrust uses the **OASIS Common Alerting Protocol (CAP) 1.2** as the initial emergency-alert interoperability reference. CAP standardizes concepts such as event, severity, urgency, certainty, area information, and instructions.
+CrisisTrust uses the **OASIS Common Alerting Protocol (CAP) 1.2** as the initial emergency-alert interoperability reference. CAP provides emergency concepts such as event, severity, urgency, certainty, area information, instructions, and source language.
 
-For meteorological and hydrological alerting authorities, the project treats the **WMO Register of Alerting Authorities (RAA)** as an important reference for authority provenance. Registration is evidence about the issuer's authority; it is not a general-purpose truth oracle for every kind of crisis information.
+The v0.3 accessibility profile uses **WCAG 2.2** as an engineering reference and BCP 47 style language tags for CrisisTrust translation records.
 
-See [`docs/cap-interop.md`](docs/cap-interop.md).
+For meteorological and hydrological alerting authorities, the project treats the **WMO Register of Alerting Authorities (RAA)** as an important reference for authority provenance. Registration is evidence about an issuer's authority; it is not a general-purpose truth oracle.
 
 ## Privacy model
 
-The reference web prototype is designed to be local-first:
+The reference web prototype is local-first:
 
 - no analytics;
 - no advertising SDKs;
@@ -139,9 +199,10 @@ The reference web prototype is designed to be local-first:
 - no background location tracking;
 - no external runtime requests;
 - no biometric identity inference;
+- no automatic online translation;
 - no storage of prearranged challenge secrets;
-- imported demo/user data rendered with safe text APIs;
-- export only when the user explicitly requests it.
+- imported data rendered with safe text APIs;
+- accessibility preferences exist only in the active browser session.
 
 ## Repository layout
 
@@ -163,27 +224,29 @@ CrisisTrust/
 
 ## Developers wanted
 
-We welcome developers, emergency-technology engineers, CAP implementers, anti-fraud researchers, accessibility specialists, privacy engineers, humanitarian technologists, disaster-risk specialists, UX researchers, translators, QA engineers, technical writers, and community-resilience practitioners.
+We welcome developers, emergency-technology engineers, CAP implementers, anti-fraud researchers, accessibility specialists, privacy engineers, humanitarian technologists, disaster-risk specialists, UX researchers, translators, localization engineers, QA engineers, technical writers, assistive-technology users, and community-resilience practitioners.
 
 High-value contributions include:
 
 - CAP interoperability;
 - provenance and integrity models;
-- anti-impersonation and independent-channel verification research;
-- accessibility and multilingual design;
+- anti-impersonation verification research;
+- screen-reader and keyboard testing;
+- Portuguese and Spanish terminology review;
+- additional BCP 47 language packs;
+- low-bandwidth and cognitive-load testing;
 - offline-first synchronization research;
 - community-resource verification;
 - privacy-preserving trusted-circle design;
 - threat modeling and abuse resistance;
 - synthetic fixtures and tests;
-- humanitarian UX research;
 - open protocol review.
 
 Accepted contributors receive credit through Git history, Pull Requests, releases, and acknowledgments. **Original authorship and project ownership remain attributed to Chris Cruz | h4ckd4d.**
 
 ## Project status
 
-`v0.2-alpha` — TrustCheck anti-impersonation verification workflow and protocol extension.
+`v0.3-alpha` — accessibility, multilingual interface, translation safety profile, and local companion translations.
 
 ## License
 

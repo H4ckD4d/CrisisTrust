@@ -81,6 +81,10 @@ const trustDetails = document.getElementById("trustDetails");
 const circleBoard = document.getElementById("circleBoard");
 const resourceList = document.getElementById("resourceList");
 
+function ui(key, fallback) {
+  return window.CrisisTrustI18n ? CrisisTrustI18n.t(key, fallback) : fallback;
+}
+
 function setLoadStatus(message, kind = "") {
   loadStatus.textContent = message;
   loadStatus.className = `status ${kind}`.trim();
@@ -102,10 +106,11 @@ function renderActionCard(alert) {
   header.className = "action-header";
   const titleWrap = document.createElement("div");
   const event = document.createElement("h3");
+  event.lang = alert.language || "en";
   event.textContent = card.event;
   const source = document.createElement("p");
   source.className = "muted";
-  source.textContent = `Source: ${card.source_name}`;
+  source.textContent = `${ui("action.source", "Source")}: ${card.source_name}`;
   titleWrap.append(event, source);
 
   const tags = document.createElement("div");
@@ -119,12 +124,14 @@ function renderActionCard(alert) {
   header.append(titleWrap, tags);
 
   const area = document.createElement("p");
-  area.textContent = `Affected area: ${card.area_description}`;
+  area.lang = alert.language || "en";
+  area.textContent = `${ui("action.area", "Affected area")}: ${card.area_description}`;
 
   const instructionTitle = document.createElement("strong");
-  instructionTitle.textContent = "Instruction preserved from source";
+  instructionTitle.textContent = ui("action.original", "Original instruction preserved from source");
   const instruction = document.createElement("div");
   instruction.className = "instruction";
+  instruction.lang = alert.language || "en";
   instruction.textContent = card.source_instruction;
 
   actionCard.append(header, area, instructionTitle, instruction);
@@ -154,14 +161,15 @@ function renderMetrics(alert) {
 function loadAlert(alert, sourceDescription) {
   const errors = CrisisTrustCore.validateAlert(alert);
   if (errors.length) {
-    setLoadStatus(`Alert rejected: ${errors.join(" ")}`, "error");
+    setLoadStatus(`${ui("load.rejected", "Alert rejected")}: ${errors.join(" ")}`, "error");
     return false;
   }
   activeAlert = structuredClone(alert);
   renderActionCard(activeAlert);
   updateTrustDetails(activeAlert);
   renderMetrics(activeAlert);
-  setLoadStatus(`${sourceDescription} loaded and validated locally.`, "success");
+  setLoadStatus(`${sourceDescription} ${ui("load.loaded", "loaded and validated locally.")}`, "success");
+  document.dispatchEvent(new CustomEvent("crisistrust-alertchange", { detail: { alertId: activeAlert.alert_id } }));
   return true;
 }
 
@@ -175,7 +183,7 @@ function renderCircleMetric() {
     updated_at: "2026-08-23T18:15:00Z"
   }));
   const summary = CrisisTrustCore.checkinSummary(syntheticRecords);
-  circleMetric.textContent = `${summary.safe}/${summary.total} safe`;
+  circleMetric.textContent = `${summary.safe}/${summary.total} ${ui("status.safe", "safe")}`;
 }
 
 function renderCircle() {
@@ -186,11 +194,11 @@ function renderCircle() {
     const label = document.createElement("strong");
     label.textContent = item.alias;
     const select = document.createElement("select");
-    select.setAttribute("aria-label", `Status for ${item.alias}`);
+    select.setAttribute("aria-label", `${ui("metric.circle", "Trusted circle")}: ${item.alias}`);
     [
-      ["safe", "Safe"],
-      ["need-assistance", "Need assistance"],
-      ["unknown", "Unknown"]
+      ["safe", ui("circle.safe", "Safe")],
+      ["need-assistance", ui("circle.need", "Need assistance")],
+      ["unknown", ui("circle.unknown", "Unknown")]
     ].forEach(([value, text]) => {
       const option = document.createElement("option");
       option.value = value;
@@ -221,18 +229,18 @@ function renderResources() {
     tags.className = "tags";
     tags.append(
       tag(item.resource_type),
-      tag(item.verification_status, item.verification_status === "verified" ? "ok" : "warn"),
-      tag(item.availability, item.availability === "available" ? "ok" : item.availability === "unavailable" ? "danger" : "warn")
+      tag(ui(`status.${item.verification_status}`, item.verification_status), item.verification_status === "verified" ? "ok" : "warn"),
+      tag(ui(`status.${item.availability}`, item.availability), item.availability === "available" ? "ok" : item.availability === "unavailable" ? "danger" : "warn")
     );
     const area = document.createElement("div");
     area.className = "resource-meta";
     area.textContent = item.address ? `${item.area_description} · ${item.address}` : item.area_description;
     const provenance = document.createElement("div");
     provenance.className = "resource-meta";
-    provenance.textContent = `Source: ${item.source} · Last verified: ${item.last_verified_at || "unknown"}`;
+    provenance.textContent = `${ui("action.source", "Source")}: ${item.source} · Last verified: ${item.last_verified_at || ui("status.unknown", "unknown")}`;
     const note = document.createElement("div");
     note.className = "resource-meta";
-    note.textContent = item.availability_note || "No availability note provided.";
+    note.textContent = item.availability_note || "—";
     card.append(heading, tags, area, provenance, note);
     resourceList.appendChild(card);
   });
@@ -243,16 +251,26 @@ alertFile.addEventListener("change", async () => {
   if (!file) return;
   try {
     const data = JSON.parse(await file.text());
-    loadAlert(data, "Imported alert");
+    loadAlert(data, ui("load.imported", "Imported alert"));
   } catch (_error) {
-    setLoadStatus("Alert file could not be parsed as JSON.", "error");
+    setLoadStatus(ui("load.parseError", "Alert file could not be parsed as JSON."), "error");
   }
 });
 
-demoButton.addEventListener("click", () => loadAlert(syntheticAlert, "Synthetic demo"));
+demoButton.addEventListener("click", () => loadAlert(syntheticAlert, ui("load.synthetic", "Synthetic demo")));
 resetCircle.addEventListener("click", () => {
   circleState = structuredClone(initialCircle);
   renderCircle();
+});
+
+document.addEventListener("crisistrust-languagechange", () => {
+  if (activeAlert) {
+    renderActionCard(activeAlert);
+    updateTrustDetails(activeAlert);
+    renderMetrics(activeAlert);
+  }
+  renderCircle();
+  renderResources();
 });
 
 renderCircle();

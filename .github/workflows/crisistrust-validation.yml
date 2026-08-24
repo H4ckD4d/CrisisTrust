@@ -2,7 +2,7 @@ name: CrisisTrust Validation
 
 on:
   push:
-    branches: [main, crisistrust-v0.2-trustcheck]
+    branches: [main, crisistrust-v0.3-accessibility-multilingual]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -35,6 +35,9 @@ jobs:
 
       - name: Test TrustCheck verification engine
         run: node scripts/test_trustcheck.js
+
+      - name: Test accessibility, i18n, and translation safety
+        run: node scripts/test_accessibility_i18n.js
 
   documentation-quality:
     runs-on: ubuntu-latest

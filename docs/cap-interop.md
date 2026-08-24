@@ -49,6 +49,36 @@ CrisisTrust preserves the following high-value concepts when available:
 - area description;
 - language.
 
+## Multilingual CAP messages
+
+CAP 1.2 permits multiple `info` blocks and includes a `language` element for the language of an `info` block. CrisisTrust adapters should preserve those source-language relationships instead of flattening different languages into one unlabeled string.
+
+For v0.3, the recommended flow is:
+
+```text
+CAP source content
+        ↓
+Preserve original language + instruction
+        ↓
+CrisisTrust alert-envelope
+        ↓
+Optional translation-record
+        ↓
+Original and companion translation shown separately
+```
+
+A source-provided CAP language variant is not the same thing as a later community or machine-assisted translation. Implementations should preserve that distinction in provenance and presentation.
+
+CrisisTrust `translation-record` objects use BCP 47 style language tags. CAP's own language field remains preserved as source metadata.
+
+## Translation safety
+
+A companion translation must not silently overwrite the CAP-derived source instruction.
+
+The reference client requires the translation's `source_text` to exactly match the referenced source field before displaying it. Language and review status remain visible to the user.
+
+See [`accessibility-multilingual.md`](accessibility-multilingual.md).
+
 ## Provenance extension
 
 CAP describes the message and sender. CrisisTrust separately records how the local implementation established source provenance:
@@ -72,9 +102,9 @@ A registry match should be represented as provenance evidence, not as a claim th
 
 CAP 1.2 supports XML signatures/encryption constructs. Future CrisisTrust adapters should preserve signature-related evidence and validate it using well-maintained libraries rather than custom cryptography.
 
-## v0.1 limitation
+## Current limitation
 
-The alpha does not fetch live public alerts. It uses synthetic fixtures only so that the protocol, UX, and validation model can mature before network ingestion is introduced.
+The alpha does not fetch live public alerts. It uses synthetic fixtures only so that the protocol, UX, translation model, and validation rules can mature before network ingestion is introduced.
 
 ---
 
