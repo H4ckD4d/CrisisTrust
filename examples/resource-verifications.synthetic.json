@@ -1,0 +1,60 @@
+[
+  {
+    "record_type": "resource-verification",
+    "protocol_version": "0.4",
+    "verification_id": "CT-RV-DEMO-001",
+    "resource_id": "CT-RESOURCE-DEMO-001",
+    "observed_at": "2026-08-23T18:05:00Z",
+    "verifier_role": "authority",
+    "source_class": "official-record",
+    "availability": "available",
+    "capacity": {"status": "available", "value": 120, "unit": "people"},
+    "accessibility": {"status": "confirmed", "note": "Synthetic accessible entrance confirmation."},
+    "verification_result": "supports",
+    "evidence_reference": "synthetic-official-record-001",
+    "note": "Synthetic verification fixture only."
+  },
+  {
+    "record_type": "resource-verification",
+    "protocol_version": "0.4",
+    "verification_id": "CT-RV-DEMO-002",
+    "resource_id": "CT-RESOURCE-DEMO-001",
+    "observed_at": "2026-08-23T18:12:00Z",
+    "verifier_role": "operator",
+    "source_class": "operator-confirmation",
+    "availability": "available",
+    "capacity": {"status": "limited", "value": 40, "unit": "spaces remaining"},
+    "accessibility": {"status": "confirmed", "note": "Synthetic operator confirmation."},
+    "verification_result": "supports",
+    "evidence_reference": "synthetic-operator-confirmation-001"
+  },
+  {
+    "record_type": "resource-verification",
+    "protocol_version": "0.4",
+    "verification_id": "CT-RV-DEMO-003",
+    "resource_id": "CT-RESOURCE-DEMO-002",
+    "observed_at": "2026-08-23T12:00:00Z",
+    "verifier_role": "community-report",
+    "source_class": "community-report",
+    "availability": "available",
+    "capacity": {"status": "limited", "note": "Synthetic community report says the resource is operating."},
+    "accessibility": {"status": "unknown"},
+    "verification_result": "supports",
+    "note": "Synthetic community report used to test conflict preservation."
+  },
+  {
+    "record_type": "resource-verification",
+    "protocol_version": "0.4",
+    "verification_id": "CT-RV-DEMO-004",
+    "resource_id": "CT-RESOURCE-DEMO-002",
+    "observed_at": "2026-08-23T12:05:00Z",
+    "verifier_role": "partner-organization",
+    "source_class": "partner-confirmation",
+    "availability": "unavailable",
+    "capacity": {"status": "full"},
+    "accessibility": {"status": "unknown"},
+    "verification_result": "contradicts",
+    "evidence_reference": "synthetic-partner-report-002",
+    "note": "Synthetic contradictory verification used to test conflict visibility."
+  }
+]

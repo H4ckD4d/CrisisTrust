@@ -1,15 +1,15 @@
-# CrisisTrust Protocol v0.3
+# CrisisTrust Protocol v0.4
 
 **Status:** Alpha draft  
 **Project owner:** Chris Cruz | h4ckd4d
 
 ## Purpose
 
-The CrisisTrust Protocol defines interoperable safety records that can be implemented by different clients without requiring a centralized vendor.
+The CrisisTrust Protocol defines interoperable safety records that different clients can implement without requiring a centralized vendor.
 
 ## Record types
 
-v0.3 defines six record types:
+v0.4 defines seven record types:
 
 1. `alert-envelope`
 2. `action-card`
@@ -17,258 +17,163 @@ v0.3 defines six record types:
 4. `community-resource`
 5. `trustcheck-case`
 6. `translation-record`
+7. `resource-verification`
 
-Each type has a JSON Schema under `schemas/`.
+Each machine-readable type has a JSON Schema under `schemas/` when applicable.
 
 ## 1. Alert envelope
 
-The alert envelope normalizes authoritative or community alert input without discarding provenance.
+Normalizes an authoritative or community alert while retaining provenance, integrity, time, event, severity, urgency, certainty, affected area, language, and source instruction.
 
-Required concepts:
-
-```text
-record_type
-protocol_version
-alert_id
-source
-source_status
-integrity_status
-sent_at
-event
-severity
-urgency
-certainty
-area_description
-instruction
-```
-
-Optional fields may include effective/expiry timestamps, language, CAP identifier, source URL, and human-readable description.
-
-### CAP mapping
-
-| CrisisTrust | CAP 1.2 concept |
-| --- | --- |
-| `alert_id` | `identifier` |
-| `sent_at` | `sent` |
-| `event` | `event` |
-| `severity` | `severity` |
-| `urgency` | `urgency` |
-| `certainty` | `certainty` |
-| `area_description` | `areaDesc` |
-| `instruction` | `instruction` |
-| `language` | `language` |
-
-CrisisTrust adds explicit provenance/integrity fields because consumers need to know not only what an alert says, but what evidence supports issuer attribution and message integrity.
+CrisisTrust preserves CAP-compatible semantics including identifier, sent time, event, severity, urgency, certainty, area description, instruction, and language.
 
 ## 2. Action Card
 
-An Action Card is a presentation-oriented derivative of an alert envelope.
+A presentation-oriented derivative of an alert envelope.
 
-It must preserve:
+It must preserve source identity, provenance, integrity, source instruction, source language, affected area, and freshness state.
 
-- source identity;
-- provenance status;
-- integrity status;
-- event;
-- severity/urgency/certainty;
-- affected-area description;
-- source instruction;
-- source language;
-- freshness/expiry state.
-
-**Critical rule:** Action Cards must not silently replace authoritative instructions with LLM-generated, translated, simplified, or otherwise rewritten emergency instructions.
-
-Companion translations and simple-language explanations must remain distinguishable from the source instruction.
+**Critical rule:** an Action Card must not silently replace authoritative instructions with generated, translated, simplified, or otherwise rewritten emergency instructions.
 
 ## 3. Check-in
 
-A check-in has minimal state:
-
-```json
-{
-  "record_type": "checkin",
-  "protocol_version": "0.1",
-  "checkin_id": "CT-CHECKIN-DEMO-001",
-  "alias": "Family member A",
-  "status": "safe",
-  "updated_at": "2026-08-23T20:00:00Z"
-}
-```
-
-Allowed statuses:
+Minimal trusted-circle state:
 
 - `safe`
 - `need-assistance`
 - `unknown`
 
-No precise location is required.
+Precise location is not required.
 
 ## 4. Community resource
 
-A resource record describes a public service/resource location. It is not a person-tracking record.
+Describes a public support resource such as a shelter, cooling center, water point, charging point, medical resource, or official information point.
 
-Required concepts include resource identifier, resource type, display name, area/address description, source, verification status, verification time when available, and availability note.
+The resource record describes identity/stable descriptive information. Operational verification history is represented separately by `resource-verification` records.
 
 ## 5. TrustCheck case
 
-A TrustCheck case records the verification process for an urgent claim without requiring personal contact details, private-message contents, biometric data, or the prearranged secret itself.
+Records a privacy-first verification workflow for urgent personal claims.
 
-Required concepts:
+`verified-by-process` requires an independently initiated known/official channel plus a second trusted corroboration, with no material conflicting result.
 
-```text
-record_type = trustcheck-case
-protocol_version = 0.2
-case_id
-claim_type
-received_at
-requested_action
-verification_state
-channels[]
-challenge
-trusted_circle[]
-```
-
-Verification states are:
-
-- `unreviewed`;
-- `verifying`;
-- `verified-by-process`;
-- `unresolved`;
-- `conflicting`;
-- `cancelled`.
-
-### TrustCheck rule
-
-`verified-by-process` requires:
-
-1. confirmation through at least one independently initiated known or official channel;
-2. a second trusted corroboration from either a prearranged challenge or Trusted Circle confirmation;
-3. no material denial or failed prearranged challenge.
-
-Conflicting evidence must not be averaged away.
-
-The protocol does not treat familiar voice, caller ID, display names, profile photographs, urgency, public personal facts, or AI-generated identity confidence as sufficient identity proof.
+Familiar voice, caller ID, display names, profile photographs, urgency, public personal facts, and AI identity confidence are not sufficient authentication.
 
 See [`trustcheck.md`](trustcheck.md).
 
 ## 6. Translation record
 
-A translation record is a companion record. It does not mutate or replace its source record.
+A companion representation linked to an exact source record and field.
 
-Required concepts:
+It contains source/target language, exact source text, translated text, and review/provenance status.
 
-```text
-record_type = translation-record
-protocol_version = 0.3
-translation_id
-subject_id
-field
-source_language
-target_language
-source_text
-translated_text
-translation_status
-```
-
-The supported core fields are:
-
-- `event`;
-- `description`;
-- `instruction`;
-- `area_description`.
-
-### Language tags
-
-CrisisTrust v0.3 translation records use well-formed BCP 47 style language tags such as:
-
-```text
-en
-pt-BR
-es
-fr-CA
-zh-Hant
-```
-
-CAP source-language metadata is preserved. A translation record describes an additional companion representation.
-
-### Translation status
-
-Allowed values are:
-
-- `source-provided`;
-- `human-reviewed`;
-- `machine-assisted-unreviewed`;
-- `translator-declared`;
-- `unverified`.
-
-A translation status describes provenance/review state. It is not a guarantee of perfect linguistic accuracy.
-
-### Source binding rule
-
-A reference client must not attach a translation to a source record unless:
-
-1. `subject_id` identifies the loaded source record;
-2. the declared field exists in that source record;
-3. `source_text` exactly equals that source field;
-4. declared source language matches the source language when available.
-
-A mismatch must remain visible as a rejection rather than being silently corrected.
+A translation never mutates or replaces its source instruction.
 
 See [`accessibility-multilingual.md`](accessibility-multilingual.md).
 
+## 7. Resource verification
+
+A `resource-verification` is a time-bound operational observation about a `community-resource`.
+
+Required core concepts:
+
+```text
+record_type = resource-verification
+protocol_version = 0.4
+verification_id
+resource_id
+observed_at
+verifier_role
+source_class
+availability
+verification_result
+```
+
+Optional operational metadata includes capacity, accessibility, evidence reference, and a short note.
+
+### Verifier roles
+
+- `authority`
+- `operator`
+- `partner-organization`
+- `trained-community-verifier`
+- `community-report`
+- `unknown`
+
+### Source classes
+
+- `official-record`
+- `operator-confirmation`
+- `partner-confirmation`
+- `direct-observation`
+- `community-report`
+- `unknown`
+
+Role and source class remain separate to keep provenance explainable.
+
+### Verification result
+
+Each record declares one of:
+
+- `supports`
+- `contradicts`
+- `inconclusive`
+
+### Derived operational states
+
+The reference engine derives:
+
+- `verified`
+- `unverified`
+- `conflicting`
+- `stale`
+- `unavailable`
+
+A single community report does not automatically produce `verified`.
+
+Current contradictory evidence must remain visible as `conflicting` instead of being averaged away.
+
+### Freshness
+
+Verification state depends on time. Implementations use a configurable freshness window appropriate to resource type and crisis context.
+
+The synthetic v0.4 reference console uses 120 minutes for deterministic testing.
+
+### Capacity and accessibility
+
+Capacity and accessibility are operational observations, not permanent guarantees. Their state must remain associated with the observation time/source.
+
+See [`community-resource-verification.md`](community-resource-verification.md).
+
 ## Accessibility profile
 
-The v0.3 reference implementation provides session-only language and accessibility preferences. WCAG 2.2 is used as an engineering reference, not as a claim of independent certification.
+The reference implementation provides session-only EN/PT-BR/ES presentation, visible keyboard focus, reduced-motion support, high-contrast and larger-text profiles, low-bandwidth presentation, and simple-language companion text.
 
-Reference-client controls include:
-
-- interface language;
-- high contrast;
-- larger text;
-- reduced motion;
-- low-bandwidth presentation;
-- simple-language companion explanations.
-
-Simple-language companion text must not replace the source instruction.
+WCAG 2.2 is an engineering reference, not a claim of independent certification.
 
 ## Versioning
-
-Protocol versions use semantic milestone numbering during incubation:
 
 ```text
 0.1 — alert/provenance foundation
 0.2 — TrustCheck anti-impersonation workflow
-0.3 — accessibility, multilingual, and translation-safety profile
-0.4 — community-resource verification profile
+0.3 — accessibility, multilingual, and translation safety
+0.4 — community-resource verification
 0.5 — offline synchronization draft
+0.6 — humanitarian / municipality node
 1.0 — stable interoperability contract
 ```
 
-Breaking schema changes before 1.0 require explicit migration notes.
-
-## Extension policy
-
-Implementations may add namespaced extension objects, but must not redefine the meaning of core fields.
+Breaking schema changes before 1.0 require migration notes.
 
 ## Privacy policy
 
-A compliant reference client should not require:
+A compliant reference client should not require precise personal GPS history, advertising identifiers, device fingerprinting, private messages, credentials, payment details, recovery codes, voice recordings, face images, biometric identity inference, or automatic online translation.
 
-- precise personal GPS history;
-- advertising identifiers;
-- device fingerprinting;
-- private messages;
-- credentials;
-- payment details;
-- recovery codes;
-- voice recordings;
-- face images;
-- biometric identity inference;
-- online translation-service submission.
+Resource verification describes public support resources; it must not become a people-tracking record.
 
 ## Safety policy
 
-CrisisTrust records are informational and coordination primitives. They do not replace emergency authorities, emergency services, professional instructions, identity-assurance systems, or payment authorization.
+CrisisTrust records are information and coordination primitives. They do not replace emergency authorities, emergency services, humanitarian operators, professional instructions, identity-assurance systems, or payment authorization.
 
 ---
 
