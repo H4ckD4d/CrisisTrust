@@ -1,0 +1,63 @@
+.trustcheck-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .8rem;
+  margin: 1rem 0;
+}
+
+.trustcheck-grid label {
+  display: grid;
+  gap: .45rem;
+  color: var(--muted);
+  font-size: .85rem;
+}
+
+.trustcheck-grid select {
+  width: 100%;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: .65rem;
+  padding: .7rem;
+}
+
+.trustcheck-output {
+  margin-top: 1rem;
+  border: 1px solid var(--line);
+  border-radius: .85rem;
+  background: var(--panel-2);
+  padding: 1rem;
+}
+
+.trustcheck-output > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: .65rem;
+}
+
+.trustcheck-output span {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: .75rem;
+}
+
+.trustcheck-result {
+  overflow-wrap: anywhere;
+}
+
+.trustcheck-result.verified-by-process { color: var(--ok); }
+.trustcheck-result.unresolved { color: var(--warn); }
+.trustcheck-result.conflicting { color: var(--danger); }
+.trustcheck-result.cancelled { color: var(--muted); }
+
+@media (max-width: 850px) {
+  .trustcheck-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 520px) {
+  .trustcheck-grid { grid-template-columns: 1fr; }
+  .trustcheck-output > div { align-items: flex-start; flex-direction: column; }
+}
