@@ -4,60 +4,49 @@
 
 ## v0.1 — Protocol Foundation
 
-- [x] project principles;
-- [x] architecture;
-- [x] trust model;
+- [x] project principles and architecture;
 - [x] CAP interoperability strategy;
-- [x] privacy/security threat model;
-- [x] JSON Schemas for core records;
-- [x] synthetic fixtures;
+- [x] provenance/integrity trust model;
+- [x] core JSON Schemas and synthetic fixtures;
 - [x] local reference dashboard;
-- [x] validation and CI;
-- [x] contributor workflow.
+- [x] validation and CI.
 
 ## v0.2 — TrustCheck
 
-- [x] independent-channel verification workflow for urgent family requests;
-- [x] explicit `verified-by-process`, `unresolved`, and `conflicting` states;
-- [x] prearranged-challenge result model without storing the secret;
-- [x] Trusted Circle corroboration model;
+- [x] independent-channel verification;
+- [x] `verified-by-process`, `unresolved`, and `conflicting` states;
+- [x] prearranged challenge result model without storing the secret;
+- [x] Trusted Circle corroboration;
 - [x] high-consequence action warnings;
-- [x] anti-impersonation UX;
-- [x] TrustCheck JSON Schema and synthetic fixture;
-- [x] reusable TrustCheck engine and automated tests;
-- [x] local dashboard integration;
-- [x] privacy validation and CI coverage.
-
-Voice, caller ID, profile photos, emotional pressure, public personal facts, and AI identity scores do not independently authenticate a person in the TrustCheck protocol.
+- [x] reusable engine, schema, fixtures, dashboard, and CI tests.
 
 ## v0.3 — Accessibility & Multilingual
 
-- [x] English, Portuguese (Brazil), and Spanish interface architecture;
-- [x] BCP 47 style language tags for translation records;
-- [x] separate `translation-record` protocol contract;
-- [x] exact source-text binding before companion translations are displayed;
-- [x] visible translation review states;
-- [x] simple-language companion text without rewriting source instructions;
-- [x] keyboard-visible focus treatment;
-- [x] screen-reader-oriented semantic/live-region improvements;
-- [x] reduced-motion profile and `prefers-reduced-motion` support;
-- [x] high-contrast profile;
-- [x] larger-text profile;
-- [x] low-bandwidth presentation mode;
-- [x] accessible TrustCheck presentation in EN/PT-BR/ES;
-- [x] automated i18n, translation-safety, and accessibility structure tests;
+- [x] EN/PT-BR/ES interface support;
+- [x] separate `translation-record` contract;
+- [x] exact source-text binding;
+- [x] translation review states;
+- [x] simple-language companion;
+- [x] high contrast, larger text, reduced motion, and low-bandwidth profiles;
+- [x] keyboard/live-region improvements;
+- [x] automated accessibility, i18n, and translation-safety tests;
 - [x] WCAG 2.2 engineering reference documented without claiming certification.
-
-Human testing with assistive technology and broader humanitarian terminology review remain ongoing community activities rather than claimed automated conformance.
 
 ## v0.4 — Community Resource Verification
 
-- resource lifecycle;
-- verification roles;
-- stale-resource detection;
-- capacity/availability freshness;
-- source history;
-- moderation and abuse controls.
+- [x] separate `resource-verification` lifecycle record;
+- [x] verification roles and source classes;
+- [x] `verified`, `unverified`, `conflicting`, `stale`, and `unavailable` derived states;
+- [x] single community report cannot automatically become verified;
+- [x] stale-resource detection with configurable freshness window;
+- [x] capacity and accessibility observation model;
+- [x] source/verification history preserved visibly;
+- [x] conflict-first aggregation policy;
+- [x] EN/PT-BR/ES Resource Verification Console;
+- [x] synthetic fixtures and automated engine tests;
+- [x] static validation and CI coverage.
+
+Humanitarian and operator review of production freshness windows, verification roles, moderation procedures, and terminology remains an ongoing community activity.
 
 ## v0.5 — Offline Resilience
 
@@ -67,7 +56,8 @@ Research and prototype:
 - intermittent-connectivity sync;
 - conflict resolution;
 - privacy-preserving trusted-circle synchronization;
-- data-retention controls.
+- data-retention controls;
+- resource-verification synchronization without hiding conflicts.
 
 ## v0.6 — Humanitarian / Municipality Node
 
@@ -75,7 +65,8 @@ Research and prototype:
 - NGO/community deployment model;
 - local authority adapters;
 - audit log specification;
-- accessibility and language packs.
+- accessibility and language packs;
+- resource-verifier role governance.
 
 ## v1.0 — Open CrisisTrust Protocol
 
@@ -87,22 +78,15 @@ Stable contracts for:
 - check-in;
 - TrustCheck case;
 - translation record;
-- community resources;
+- community resource;
+- resource verification;
 - protocol version negotiation;
 - integrity extensions;
 - offline synchronization profile.
 
 ## Non-goals
 
-CrisisTrust will not become:
-
-- an advertising network;
-- a people-tracking platform;
-- a private-message surveillance platform;
-- an AI emergency-command system;
-- a biometric identity oracle;
-- a payment authorization system;
-- a replacement for public emergency authorities.
+CrisisTrust will not become an advertising network, people-tracking platform, private-message surveillance platform, AI emergency-command system, biometric identity oracle, payment authorization system, or replacement for public emergency authorities.
 
 ---
 
