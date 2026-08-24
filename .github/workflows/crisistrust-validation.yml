@@ -2,7 +2,7 @@ name: CrisisTrust Validation
 
 on:
   push:
-    branches: [main, crisistrust-v0.1]
+    branches: [main, crisistrust-v0.2-trustcheck]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -32,6 +32,9 @@ jobs:
 
       - name: Test CrisisTrust protocol core
         run: node scripts/test_core.js
+
+      - name: Test TrustCheck verification engine
+        run: node scripts/test_trustcheck.js
 
   documentation-quality:
     runs-on: ubuntu-latest
