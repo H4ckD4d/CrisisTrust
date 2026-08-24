@@ -15,17 +15,20 @@
 - [x] validation and CI;
 - [x] contributor workflow.
 
-## v0.2 — TrustCheck Research
+## v0.2 — TrustCheck
 
-Goals:
+- [x] independent-channel verification workflow for urgent family requests;
+- [x] explicit `verified-by-process`, `unresolved`, and `conflicting` states;
+- [x] prearranged-challenge result model without storing the secret;
+- [x] Trusted Circle corroboration model;
+- [x] high-consequence action warnings;
+- [x] anti-impersonation UX;
+- [x] TrustCheck JSON Schema and synthetic fixture;
+- [x] reusable TrustCheck engine and automated tests;
+- [x] local dashboard integration;
+- [x] privacy validation and CI coverage.
 
-- independent-channel verification workflow for urgent family requests;
-- source-chain display;
-- signed provenance research;
-- anti-impersonation UX;
-- explicit warning that voice/caller identity alone is insufficient evidence.
-
-No biometric identity inference is planned for the core protocol.
+Voice, caller ID, profile photos, emotional pressure, public personal facts, and AI identity scores do not independently authenticate a person in the TrustCheck protocol.
 
 ## v0.3 — Accessibility & Multilingual
 
@@ -34,7 +37,8 @@ No biometric identity inference is planned for the core protocol.
 - screen-reader testing;
 - low-bandwidth mode;
 - visual-accessibility profiles;
-- humanitarian terminology review.
+- humanitarian terminology review;
+- accessible TrustCheck decision flow.
 
 ## v0.4 — Community Resource Verification
 
@@ -71,6 +75,7 @@ Stable contracts for:
 - provenance;
 - Action Card;
 - check-in;
+- TrustCheck case;
 - community resources;
 - protocol version negotiation;
 - integrity extensions;
@@ -84,6 +89,8 @@ CrisisTrust will not become:
 - a people-tracking platform;
 - a private-message surveillance platform;
 - an AI emergency-command system;
+- a biometric identity oracle;
+- a payment authorization system;
 - a replacement for public emergency authorities.
 
 ---
