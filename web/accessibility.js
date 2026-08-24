@@ -1,10 +1,10 @@
 "use strict";
 
 (function (root, factory) {
-  const api = factory();
+  const api = factory(root);
   if (typeof module === "object" && module.exports) module.exports = api;
   root.CrisisTrustAccessibility = api;
-})(typeof globalThis !== "undefined" ? globalThis : this, function () {
+})(typeof globalThis !== "undefined" ? globalThis : this, function (root) {
   const classMap = Object.freeze({
     highContrast: "access-high-contrast",
     largeText: "access-large-text",

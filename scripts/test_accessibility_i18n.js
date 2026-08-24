@@ -55,6 +55,70 @@ assert.ok(accessibility.simpleLanguageText.en.includes("original"));
 assert.ok(accessibility.simpleLanguageText["pt-BR"].includes("original"));
 assert.ok(accessibility.simpleLanguageText.es.includes("original"));
 
+// Runtime regression test: simulate the browser language selector changing from
+// English to Portuguese. This specifically protects the DOM binding path, not
+// only the dictionaries themselves.
+function fakeControl(initial = {}) {
+  const listeners = {};
+  return {
+    value: initial.value || "",
+    checked: Boolean(initial.checked),
+    textContent: initial.textContent || "",
+    hidden: Boolean(initial.hidden),
+    addEventListener(type, handler) { listeners[type] = handler; },
+    fire(type) { if (listeners[type]) listeners[type](); }
+  };
+}
+
+const languageControl = fakeControl({ value: "en" });
+const highContrastControl = fakeControl();
+const largeTextControl = fakeControl();
+const reducedMotionControl = fakeControl();
+const lowBandwidthControl = fakeControl();
+const simpleLanguageControl = fakeControl();
+const announcer = fakeControl();
+const simplePanel = fakeControl({ hidden: true });
+const simpleText = fakeControl();
+const simpleLabel = fakeControl();
+const simpleHeading = fakeControl();
+const translatedHeading = { dataset: { i18n: "controls.title" }, textContent: "Accessibility & language" };
+
+const elements = {
+  languageSelect: languageControl,
+  highContrastToggle: highContrastControl,
+  largeTextToggle: largeTextControl,
+  reducedMotionToggle: reducedMotionControl,
+  lowBandwidthToggle: lowBandwidthControl,
+  simpleLanguageToggle: simpleLanguageControl,
+  accessibilityStatus: announcer,
+  simpleLanguageCompanion: simplePanel,
+  simpleLanguageText: simpleText,
+  simpleLanguageLabel: simpleLabel,
+  simpleLanguageHeading: simpleHeading
+};
+
+const fakeDocument = {
+  documentElement: {
+    lang: "en",
+    classList: { toggle() {} }
+  },
+  getElementById(id) { return elements[id] || null; },
+  querySelectorAll(selector) {
+    if (selector === "[data-i18n]") return [translatedHeading];
+    if (selector === "[data-i18n-aria-label]") return [];
+    return [];
+  }
+};
+
+i18n.setLanguage("en", fakeDocument);
+accessibility.attach(fakeDocument);
+languageControl.value = "pt-BR";
+languageControl.fire("change");
+assert.strictEqual(i18n.currentLanguage(), "pt-BR");
+assert.strictEqual(fakeDocument.documentElement.lang, "pt-BR");
+assert.strictEqual(translatedHeading.textContent, "Acessibilidade e idioma");
+assert.ok(announcer.textContent.includes("sessão do navegador"));
+
 const html = fs.readFileSync(path.join(root, "web/index.html"), "utf8");
 for (const required of [
   'id="languageSelect"',
