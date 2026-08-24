@@ -1,0 +1,15 @@
+{
+  "record_type": "translation-record",
+  "protocol_version": "0.3",
+  "translation_id": "CT-TRANS-DEMO-PTBR-001",
+  "subject_id": "CT-ALERT-DEMO-0001",
+  "field": "instruction",
+  "source_language": "en",
+  "target_language": "pt-BR",
+  "source_text": "Follow the instructions of your local emergency authority. This sentence is synthetic test content and is not real-world emergency guidance.",
+  "translated_text": "Siga as instruções da autoridade de emergência local. Esta frase é conteúdo sintético de teste e não é orientação real para emergências.",
+  "translation_status": "human-reviewed",
+  "translator_reference": "CrisisTrust synthetic fixture",
+  "translated_at": "2026-08-23T23:00:00Z",
+  "notes": "Synthetic documentation fixture only."
+}
