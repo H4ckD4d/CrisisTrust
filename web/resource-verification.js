@@ -63,10 +63,10 @@ const verificationFixtures = [
     observed_at: "2026-08-23T12:00:00Z",
     verifier_role: "community-report",
     source_class: "community-report",
-    availability: "unknown",
-    capacity: { status: "unknown" },
+    availability: "available",
+    capacity: { status: "limited", note: "Synthetic community report says the resource is operating." },
     accessibility: { status: "unknown" },
-    verification_result: "inconclusive"
+    verification_result: "supports"
   },
   {
     record_type: "resource-verification",
