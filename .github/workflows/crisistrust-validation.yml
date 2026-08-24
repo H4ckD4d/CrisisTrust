@@ -1,0 +1,48 @@
+name: CrisisTrust Validation
+
+on:
+  push:
+    branches: [main, crisistrust-v0.1]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  protocol-and-privacy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Validate project structure and privacy boundaries
+        run: python scripts/validate_project.py
+
+      - name: Test CrisisTrust protocol core
+        run: node scripts/test_core.js
+
+  documentation-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Lint CrisisTrust Markdown
+        run: npx --yes markdownlint-cli2 "**/*.md" "#node_modules"
