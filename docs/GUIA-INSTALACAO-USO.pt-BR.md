@@ -1,139 +1,158 @@
-# Guia de Instalação e Uso — CrisisTrust v0.4
+# Manual Atualizado — CrisisTrust v0.4
 
-> Guia passo a passo para iniciantes em Windows, Linux e macOS.
+> Instalação local, VS Code, execução, atualização, testes e troubleshooting para iniciantes.
 >
 > **Original creator, project owner, and primary maintainer: Chris Cruz | h4ckd4d**
 
-Este documento ensina como **baixar, instalar dependências, iniciar, atualizar, testar e usar o CrisisTrust** em um computador local.
+Este manual consolida o fluxo real usado para instalar e testar o CrisisTrust no Windows, incluindo as correções encontradas durante a homologação manual do projeto.
 
-O CrisisTrust é um projeto open source, local-first e privacy-first. O cliente de referência é executado em `127.0.0.1`, ou seja, somente no próprio computador por padrão.
+## 1. Estado atual do projeto
 
-## 1. O que você vai instalar
-
-Para apenas abrir o CrisisTrust no navegador, você precisa de:
-
-- Git;
-- Python 3.12 ou superior;
-- um navegador moderno, como Chrome, Edge ou Firefox.
-
-Para executar também os testes automatizados, instale:
-
-- Node.js LTS.
-
-Resumo:
+O cliente de referência CrisisTrust v0.4 é local-first. O servidor de desenvolvimento padrão usa:
 
 ```text
-Git       → baixa e atualiza o projeto
-Python    → inicia o servidor local
-Navegador → abre a interface
-Node.js   → executa os testes automatizados
+http://127.0.0.1:8771
 ```
 
-## 2. Onde o CrisisTrust deve ficar no computador
-
-Evite instalar projetos dentro de pastas do sistema como:
+A interface principal fica em:
 
 ```text
-C:\Windows\System32
+http://127.0.0.1:8771
 ```
 
-No Windows, recomendamos:
+A console de verificação de recursos comunitários fica em:
 
 ```text
-C:\Users\SEU_USUARIO\GitHub\CrisisTrust
+http://127.0.0.1:8771/resources.html
 ```
 
-Exemplo:
+O servidor faz bind somente em `127.0.0.1`, portanto não fica exposto automaticamente para outros dispositivos da rede.
+
+## 2. O que o teste no VS Code confirma
+
+Quando você vê no terminal:
 
 ```text
-C:\Users\ADM\GitHub\CrisisTrust
+CrisisTrust project validation passed.
 ```
 
-No Linux/macOS, um local simples é:
+a validação estrutural e de privacidade terminou com sucesso.
+
+Quando você vê:
 
 ```text
-~/GitHub/CrisisTrust
+CrisisTrust local MVP: http://127.0.0.1:8771
+Loopback only. Press Ctrl+C to stop.
 ```
 
-## 3. Instalação no Windows — passo a passo
+o servidor está funcionando.
 
-### 3.1 Abra o PowerShell
-
-Você pode usar o PowerShell normal. Não é necessário executar como Administrador para usar o CrisisTrust.
-
-### 3.2 Verifique se o Git existe
-
-Execute:
-
-```powershell
-git --version
-```
-
-Resultado esperado:
+Linhas como:
 
 ```text
-git version 2.x.x.windows.x
+127.0.0.1 - - [...] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [...] "GET / HTTP/1.1" 304 -
 ```
 
-Se o Git não existir e seu Windows tiver `winget`:
+são normais. `200` significa que o arquivo foi entregue. `304` significa que o navegador pode reutilizar uma cópia válida do cache.
+
+A mensagem:
+
+```text
+GET /favicon.ico HTTP/1.1 404
+```
+
+também é inofensiva: significa somente que ainda não existe um favicon configurado.
+
+## 3. Ferramentas necessárias
+
+Para executar o projeto:
+
+```text
+Git        -> baixar e atualizar o repositório
+Python     -> executar o servidor local e o validador
+Navegador  -> abrir a interface
+VS Code    -> editar e estudar o projeto
+Node.js    -> executar os testes JavaScript
+```
+
+Recomendado no Windows:
+
+- Git for Windows
+- Python 3.12 ou superior
+- Node.js LTS
+- Visual Studio Code
+- Chrome, Edge ou Firefox
+
+## 4. Instalação rápida no Windows com winget
+
+Abra PowerShell normal.
+
+### 4.1 Instalar Git
 
 ```powershell
 winget install -e --id Git.Git
 ```
 
-Feche e abra novamente o PowerShell depois da instalação.
-
-### 3.3 Verifique o Python
-
-Execute:
-
-```powershell
-python --version
-```
-
-Resultado esperado:
-
-```text
-Python 3.12.x
-```
-
-Também é possível testar:
-
-```powershell
-py --version
-```
-
-Se Python não estiver instalado:
+### 4.2 Instalar Python 3.12
 
 ```powershell
 winget install -e --id Python.Python.3.12
 ```
 
-Depois da instalação, **feche completamente o PowerShell e abra uma nova janela**.
+### 4.3 Instalar Node.js LTS
 
-### 3.4 Se o Windows disser `Python was not found`
+```powershell
+winget install -e --id OpenJS.NodeJS.LTS
+```
 
-Primeiro procure a instalação real:
+### 4.4 Instalar VS Code
+
+```powershell
+winget install -e --id Microsoft.VisualStudioCode
+```
+
+Depois de instalações, feche completamente o PowerShell e abra uma nova janela.
+
+## 5. Validar as instalações
+
+```powershell
+git --version
+python --version
+node --version
+code --version
+```
+
+Exemplos esperados:
+
+```text
+git version 2.x
+Python 3.12.x
+v22.x ou outra versão LTS atual
+1.xx.x
+```
+
+## 6. Correção: `Python was not found`
+
+Se aparecer:
+
+```text
+Python was not found; run without arguments to install from the Microsoft Store...
+```
+
+procure o executável real:
 
 ```powershell
 Get-ChildItem "$env:LOCALAPPDATA\Programs\Python" -Recurse -Filter python.exe -ErrorAction SilentlyContinue
 ```
 
-Um caminho comum é:
-
-```text
-C:\Users\SEU_USUARIO\AppData\Local\Programs\Python\Python312\python.exe
-```
-
-Teste diretamente:
+Teste um caminho comum:
 
 ```powershell
 & "$env:LOCALAPPDATA\Programs\Python\Python312\python.exe" --version
 ```
 
-Se funcionar, mas `python --version` não funcionar, o problema é PATH ou o App Execution Alias da Microsoft Store.
-
-Você pode verificar qual executável está sendo encontrado:
+Veja o que o Windows encontra:
 
 ```powershell
 where.exe python
@@ -145,9 +164,43 @@ Se aparecer apenas:
 C:\Users\SEU_USUARIO\AppData\Local\Microsoft\WindowsApps\python.exe
 ```
 
-esse é o alias da Microsoft Store, não o executável real.
+isso pode ser o App Execution Alias da Microsoft Store.
 
-### 3.5 Crie uma pasta para seus projetos GitHub
+Para adicionar a instalação real ao PATH do usuário:
+
+```powershell
+$PythonDir = "$env:LOCALAPPDATA\Programs\Python\Python312"
+$ScriptsDir = "$PythonDir\Scripts"
+$CurrentPath = [Environment]::GetEnvironmentVariable("Path","User")
+
+[Environment]::SetEnvironmentVariable(
+    "Path",
+    "$PythonDir;$ScriptsDir;$CurrentPath",
+    "User"
+)
+```
+
+Feche o PowerShell, abra outro e teste:
+
+```powershell
+python --version
+```
+
+## 7. Onde guardar o projeto
+
+Não use:
+
+```text
+C:\Windows\System32
+```
+
+Use uma pasta de projetos:
+
+```text
+C:\Users\SEU_USUARIO\GitHub
+```
+
+Exemplo:
 
 ```powershell
 cd $HOME
@@ -155,15 +208,10 @@ mkdir GitHub -ErrorAction SilentlyContinue
 cd GitHub
 ```
 
-### 3.6 Clone o CrisisTrust
+## 8. Clonar o CrisisTrust
 
 ```powershell
 git clone https://github.com/H4ckD4d/CrisisTrust.git
-```
-
-Entre na pasta:
-
-```powershell
 cd CrisisTrust
 ```
 
@@ -173,77 +221,207 @@ Confirme:
 pwd
 ```
 
-O caminho deverá ser semelhante a:
+Exemplo:
 
 ```text
 C:\Users\ADM\GitHub\CrisisTrust
 ```
 
-## 4. Iniciando o CrisisTrust
+## 9. Abrir no VS Code
 
-Dentro da pasta do projeto, execute:
+Dentro da pasta:
+
+```powershell
+code .
+```
+
+O ponto `.` significa: abra a pasta atual.
+
+Se `code` não for reconhecido, abra o VS Code manualmente:
+
+```text
+File
+-> Open Folder
+-> C:\Users\SEU_USUARIO\GitHub\CrisisTrust
+```
+
+## 10. Confiar na pasta no VS Code
+
+Se aparecer `Restricted Mode`, clique em:
+
+```text
+Restricted Mode
+-> Trust
+-> Trust this folder
+```
+
+Faça isso somente se você confia no repositório que abriu.
+
+## 11. Estrutura que deve aparecer no Explorer
+
+```text
+CrisisTrust/
+├── .github/
+├── docs/
+├── examples/
+├── schemas/
+├── scripts/
+├── web/
+├── .gitignore
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+├── DEVELOPERS.md
+├── LICENSE
+├── README.md
+├── ROADMAP.md
+└── SECURITY.md
+```
+
+## 12. Abrir o terminal integrado do VS Code
+
+No menu superior:
+
+```text
+Terminal
+-> New Terminal
+```
+
+Atalho:
+
+```text
+Ctrl + `
+```
+
+O terminal deve abrir em:
+
+```text
+C:\Users\SEU_USUARIO\GitHub\CrisisTrust
+```
+
+Confirme:
+
+```powershell
+pwd
+```
+
+## 13. Criar um segundo terminal no VS Code
+
+Quando o servidor estiver rodando, o terminal fica ocupado.
+
+Para abrir outro terminal:
+
+1. Clique no botão `+` no painel Terminal.
+2. Ou use `Terminal -> New Terminal`.
+3. Mantenha um terminal para o servidor e outro para Git/testes.
+
+Modelo:
+
+```text
+Terminal 1 -> python scripts\serve_local.py
+Terminal 2 -> git status / testes / git pull
+```
+
+## 14. Extensões recomendadas no VS Code
+
+Abra Extensions:
+
+```text
+Ctrl + Shift + X
+```
+
+Recomendadas:
+
+- Python — Microsoft
+- Pylance — Microsoft
+- GitHub Pull Requests and Issues — GitHub
+- Markdown All in One
+- ESLint
+- Prettier
+- GitLens
+
+Você não precisa de todas para apenas executar o projeto.
+
+## 15. Validar o projeto antes de iniciar
+
+No terminal:
+
+```powershell
+python scripts\validate_project.py
+```
+
+Esperado:
+
+```text
+CrisisTrust project validation passed.
+```
+
+Se esse teste falhar, leia a mensagem antes de iniciar o servidor.
+
+## 16. Iniciar o servidor local
 
 ```powershell
 python scripts\serve_local.py
 ```
 
-Resultado esperado:
+Esperado:
 
 ```text
 CrisisTrust local MVP: http://127.0.0.1:8771
 Loopback only. Press Ctrl+C to stop.
 ```
 
-**Não feche essa janela enquanto estiver usando o sistema.**
+Mantenha esse terminal aberto.
 
-Agora abra no navegador:
+## 17. Abrir no navegador
+
+Interface:
 
 ```text
 http://127.0.0.1:8771
 ```
 
-Para a tela de verificação de recursos comunitários:
+Resource Verification:
 
 ```text
 http://127.0.0.1:8771/resources.html
 ```
 
-## 5. Como parar o servidor
+## 18. Parar o servidor
 
-Volte ao PowerShell onde o servidor está em execução e pressione:
+No terminal que está rodando o servidor:
 
 ```text
 Ctrl + C
 ```
 
-## 6. Primeira demonstração
+## 19. Confirmar que a versão visual é v0.4
 
-Abra:
-
-```text
-http://127.0.0.1:8771
-```
-
-Clique em:
+O topo da interface deve mostrar:
 
 ```text
-Load synthetic demo
+PROJECT h4ckd4d · CRISISTRUST v0.4
 ```
 
-A aplicação deve mostrar um alerta sintético com informações como:
+Se mostrar uma versão antiga:
 
-- Source;
-- Integrity;
-- Freshness;
-- Trusted Circle;
-- Action Card;
-- Trust Context.
+1. Pare o servidor.
+2. Execute `git pull`.
+3. Inicie o servidor.
+4. Use `Ctrl + F5` no navegador.
 
-O conteúdo é de demonstração e **não deve ser tratado como alerta real de emergência**.
+## 20. Hard refresh
 
-## 7. Mudando o idioma
+No Chrome/Edge:
 
-Na área **Accessibility & language**, selecione:
+```text
+Ctrl + F5
+```
+
+Use isso depois de atualizar JavaScript ou CSS.
+
+## 21. Testar idioma
+
+Na área de acessibilidade, selecione:
 
 ```text
 English
@@ -251,7 +429,7 @@ Português (Brasil)
 Español
 ```
 
-Ao selecionar `Português (Brasil)`, a interface deve mudar imediatamente para textos como:
+Em Português, partes da interface devem mudar para textos como:
 
 ```text
 Acessibilidade e idioma
@@ -261,35 +439,49 @@ Círculo de Confiança
 Recursos comunitários
 ```
 
-Se o idioma não mudar depois de uma atualização do projeto, faça um hard refresh no navegador:
+O bug em que o seletor mudava mas o texto continuava em inglês foi corrigido e possui teste de regressão.
+
+## 22. Testar o alerta sintético
+
+Clique:
 
 ```text
-Ctrl + F5
+Load synthetic demo
 ```
 
-## 8. Testando os recursos de acessibilidade
+Confirme:
 
-Na tela principal, teste individualmente:
+- Source
+- Integrity
+- Freshness
+- Trusted Circle
+- Action Card
+- Trust Context
+
+O fixture é sintético e não representa uma emergência real.
+
+## 23. Testar tradução complementar
+
+Após carregar o demo:
 
 ```text
-High contrast
-Larger text
-Reduced motion
-Low-bandwidth mode
-Simple-language companion
+Demo Portuguese translation
+Demo Spanish translation
 ```
 
-As preferências valem somente para a sessão atual do navegador e não são armazenadas automaticamente pelo cliente de referência.
+O sistema deve manter:
 
-## 9. Testando o TrustCheck
+```text
+Original
++
+Companion translation
+```
 
-Role a página até **TrustCheck**.
+A tradução não deve substituir silenciosamente o texto original.
 
-O TrustCheck ajuda a avaliar pedidos urgentes sem tratar voz, caller ID, foto de perfil ou pressão emocional como autenticação suficiente.
+## 24. Testar TrustCheck
 
-### Cenário A — não confirmado
-
-Selecione algo semelhante a:
+Cenário não confirmado:
 
 ```text
 Claim type: Family emergency
@@ -299,81 +491,41 @@ Prearranged challenge: Not used
 Trusted Circle: Not asked
 ```
 
-Clique em:
-
-```text
-Evaluate verification state
-```
-
-O resultado esperado é:
+Resultado esperado:
 
 ```text
 unresolved
 ```
 
-### Cenário B — confirmação pelo processo
-
-Use:
+Cenário corroborado:
 
 ```text
 Independent channel: Confirmed
 Prearranged challenge: Passed
 ```
 
-Sem evidência conflitante, o resultado pode ser:
+Resultado possível:
 
 ```text
 verified-by-process
 ```
 
-Isso significa apenas que o fluxo documentado obteve a corroboração exigida. Não é garantia matemática de identidade, verdade ou segurança.
-
-### Cenário C — conflito
-
-Use:
+Cenário conflitante:
 
 ```text
 Independent channel: Confirmed
 Prearranged challenge: Failed
 ```
 
-O resultado esperado é:
+Resultado esperado:
 
 ```text
 conflicting
 ```
 
-## 10. Testando traduções complementares
+`verified-by-process` não é garantia absoluta de identidade ou veracidade.
 
-Primeiro carregue:
-
-```text
-Load synthetic demo
-```
-
-Depois clique em:
-
-```text
-Demo Portuguese translation
-```
-
-ou:
-
-```text
-Demo Spanish translation
-```
-
-A interface deve mostrar:
-
-```text
-Original
-+
-Companion translation
-```
-
-A tradução nunca deve substituir silenciosamente o texto original da fonte.
-
-## 11. Testando Community Resource Verification
+## 25. Testar Resource Verification
 
 Abra:
 
@@ -381,9 +533,7 @@ Abra:
 http://127.0.0.1:8771/resources.html
 ```
 
-A demonstração mostra recursos sintéticos e seu histórico de verificação.
-
-Observe os estados:
+Estados possíveis:
 
 ```text
 verified
@@ -393,63 +543,15 @@ stale
 unavailable
 ```
 
-Uma regra importante do projeto é:
+Regra importante:
 
 ```text
 single community report
-        ≠
+        !=
 automatic verified resource
 ```
 
-Um relato comunitário é evidência, mas não se transforma automaticamente em confirmação oficial.
-
-## 12. Validando a estrutura do projeto
-
-Abra um segundo PowerShell e entre na pasta:
-
-```powershell
-cd "$HOME\GitHub\CrisisTrust"
-```
-
-Execute:
-
-```powershell
-python scripts\validate_project.py
-```
-
-Resultado esperado:
-
-```text
-CrisisTrust project validation passed.
-```
-
-Esse validador não acessa a Internet.
-
-## 13. Instalando Node.js para executar os testes
-
-Verifique:
-
-```powershell
-node --version
-```
-
-Se Node.js não estiver instalado:
-
-```powershell
-winget install -e --id OpenJS.NodeJS.LTS
-```
-
-Feche e abra novamente o PowerShell.
-
-Confirme:
-
-```powershell
-node --version
-```
-
-## 14. Executando todos os testes manualmente
-
-Na raiz do projeto:
+## 26. Executar os testes Node
 
 ```powershell
 node scripts\test_core.js
@@ -458,7 +560,7 @@ node scripts\test_accessibility_i18n.js
 node scripts\test_resource_verification.js
 ```
 
-Resultados esperados incluem:
+Esperado:
 
 ```text
 CrisisTrust core tests passed.
@@ -467,164 +569,127 @@ CrisisTrust accessibility, i18n, and translation tests passed.
 CrisisTrust community resource verification tests passed.
 ```
 
-## 15. Atualizando o CrisisTrust
+## 27. Atualizar o projeto
 
-Pare o servidor com:
+Pare o servidor:
 
 ```text
 Ctrl + C
 ```
 
-Entre na pasta do projeto:
+Depois:
 
 ```powershell
 cd "$HOME\GitHub\CrisisTrust"
-```
-
-Execute:
-
-```powershell
+git status
 git pull
 ```
 
-Depois inicie novamente:
+Reinicie:
 
 ```powershell
 python scripts\serve_local.py
 ```
 
-No navegador, faça:
+No navegador:
 
 ```text
 Ctrl + F5
 ```
 
-para evitar que arquivos JavaScript antigos permaneçam em cache.
+## 28. Confirmar o último commit sem `less`
 
-## 16. Erro `Could not resolve host: github.com`
-
-Exemplo:
-
-```text
-fatal: unable to access 'https://github.com/...':
-Could not resolve host: github.com
-```
-
-Isso significa que o Git não conseguiu resolver o domínio `github.com`. Normalmente é um problema de rede, DNS, VPN, proxy ou conexão temporária.
-
-Primeiro teste:
+Use:
 
 ```powershell
-Resolve-DnsName github.com
+git --no-pager log -1 --oneline
 ```
 
-Depois:
+Esse comando evita o paginador `less`.
+
+Para desabilitar o pager globalmente:
 
 ```powershell
-Test-NetConnection github.com -Port 443
+git config --global core.pager cat
 ```
 
-Se a resolução DNS falhar, tente:
+Para desfazer:
 
 ```powershell
-ipconfig /flushdns
+git config --global --unset core.pager
 ```
 
-Depois teste novamente:
+## 29. Erro `cannot spawn less`
 
-```powershell
-Resolve-DnsName github.com
-```
-
-Também verifique se:
-
-- sua Internet está funcionando;
-- uma VPN não está bloqueando a resolução;
-- um proxy corporativo não está interferindo;
-- firewall ou filtro DNS não está bloqueando GitHub.
-
-O CrisisTrust local continuará funcionando mesmo que o GitHub esteja temporariamente inacessível; apenas `git pull`, `git clone` e outras operações remotas ficarão indisponíveis.
-
-## 17. Erro `cannot spawn less`
-
-Exemplo:
+Se aparecer:
 
 ```text
 error: cannot spawn less: No such file or directory
 fatal: unable to execute pager 'less'
 ```
 
-Esse erro é do paginador configurado no Git, não do CrisisTrust.
+não é falha do CrisisTrust.
 
-Para ver o último commit sem paginador:
+Use:
 
 ```powershell
 git --no-pager log -1 --oneline
 ```
 
-Para desativar o paginador globalmente:
+ou configure:
 
 ```powershell
 git config --global core.pager cat
 ```
 
-Depois:
+## 30. Erro `Could not resolve host: github.com`
+
+Teste DNS:
 
 ```powershell
-git log -1 --oneline
+Resolve-DnsName github.com
 ```
 
-Para desfazer essa configuração no futuro:
+Teste HTTPS:
 
 ```powershell
-git config --global --unset core.pager
+Test-NetConnection github.com -Port 443
 ```
 
-## 18. Mensagem `favicon.ico 404`
+Limpe o cache DNS:
 
-No terminal do servidor você pode ver:
+```powershell
+ipconfig /flushdns
+```
+
+Depois tente:
+
+```powershell
+git pull
+```
+
+Se o servidor local já estiver rodando, ele continuará funcionando mesmo sem acesso ao GitHub.
+
+## 31. Confirmar o remote Git
+
+```powershell
+git remote -v
+```
+
+Esperado:
 
 ```text
-GET /favicon.ico HTTP/1.1 404
+origin  https://github.com/H4ckD4d/CrisisTrust.git (fetch)
+origin  https://github.com/H4ckD4d/CrisisTrust.git (push)
 ```
 
-Isso significa apenas que o navegador procurou um ícone de aba que ainda não existe no projeto.
-
-Esse `404` não impede o funcionamento do CrisisTrust e não indica falha no protocolo, dashboard ou servidor local.
-
-## 19. Erro `Address already in use`
-
-Se a porta `8771` já estiver em uso, provavelmente existe outra instância do servidor ainda aberta.
-
-No Windows, verifique:
-
-```powershell
-Get-NetTCPConnection -LocalPort 8771 -ErrorAction SilentlyContinue
-```
-
-Pare a janela antiga com:
-
-```text
-Ctrl + C
-```
-
-Depois inicie novamente.
-
-## 20. Verificando a versão local
-
-Veja o último commit sem paginador:
-
-```powershell
-git --no-pager log -1 --oneline
-```
-
-Verifique também o estado do repositório:
+## 32. Verificar estado do Git
 
 ```powershell
 git status
 ```
 
-O estado ideal é:
+Estado ideal:
 
 ```text
 On branch main
@@ -632,9 +697,138 @@ Your branch is up to date with 'origin/main'.
 nothing to commit, working tree clean
 ```
 
-## 21. Instalação rápida no Linux
+Se houver arquivos modificados, não execute comandos destrutivos sem entender o que mudou.
 
-Exemplo para Ubuntu/Debian:
+## 33. O botão `Update` do VS Code
+
+Se aparecer `Update` no canto superior direito do VS Code, é uma atualização do editor.
+
+Ela não é necessária para o CrisisTrust continuar rodando. Você pode atualizar o VS Code em um momento conveniente.
+
+## 34. Triângulo amarelo no terminal do VS Code
+
+Se o terminal está executando os comandos e o servidor funciona, um pequeno ícone de aviso ao lado do nome do terminal não significa automaticamente falha do CrisisTrust.
+
+Confirme primeiro:
+
+```powershell
+python --version
+python scripts\validate_project.py
+```
+
+Se ambos funcionarem, trate o aviso como questão do terminal/extensão até haver mensagem de erro específica.
+
+## 35. `favicon.ico 404`
+
+Mensagem comum:
+
+```text
+GET /favicon.ico HTTP/1.1 404
+```
+
+É inofensiva. O navegador apenas tentou buscar um ícone de aba que não existe.
+
+## 36. `304 Not Modified`
+
+Exemplo:
+
+```text
+GET / HTTP/1.1 304
+```
+
+É normal. O navegador está reutilizando cache válido.
+
+Se você acabou de atualizar o projeto e quer garantir arquivos novos:
+
+```text
+Ctrl + F5
+```
+
+## 37. Porta 8771 ocupada
+
+Verifique:
+
+```powershell
+Get-NetTCPConnection -LocalPort 8771 -ErrorAction SilentlyContinue
+```
+
+Se existe outra instância do CrisisTrust, volte ao terminal antigo e pressione:
+
+```text
+Ctrl + C
+```
+
+## 38. Fluxo diário recomendado no VS Code
+
+```text
+1. Abrir PowerShell
+2. cd "$HOME\GitHub\CrisisTrust"
+3. git pull
+4. code .
+5. Terminal -> New Terminal
+6. python scripts\validate_project.py
+7. python scripts\serve_local.py
+8. Abrir segundo terminal
+9. Executar testes ou estudar código
+10. Ctrl+C para encerrar o servidor
+```
+
+## 39. Fluxo diário quando você pretende editar código
+
+Antes:
+
+```powershell
+git status
+git pull
+```
+
+Depois da edição:
+
+```powershell
+git status
+git diff
+```
+
+Não envie mudanças diretamente para `main` sem revisão. O fluxo profissional é:
+
+```text
+branch
+-> mudanças
+-> testes
+-> commit
+-> push
+-> Pull Request
+-> CI
+-> merge
+```
+
+## 40. Comandos rápidos de referência
+
+```powershell
+cd "$HOME\GitHub\CrisisTrust"
+git status
+git pull
+git --no-pager log -1 --oneline
+python scripts\validate_project.py
+python scripts\serve_local.py
+```
+
+Testes:
+
+```powershell
+node scripts\test_core.js
+node scripts\test_trustcheck.js
+node scripts\test_accessibility_i18n.js
+node scripts\test_resource_verification.js
+```
+
+VS Code:
+
+```powershell
+code .
+```
+
+## 41. Instalação rápida no Ubuntu/Debian
 
 ```bash
 sudo apt update
@@ -643,28 +837,19 @@ mkdir -p ~/GitHub
 cd ~/GitHub
 git clone https://github.com/H4ckD4d/CrisisTrust.git
 cd CrisisTrust
+python3 scripts/validate_project.py
 python3 scripts/serve_local.py
 ```
 
-Abra:
-
-```text
-http://127.0.0.1:8771
-```
-
-Testes:
+VS Code, quando instalado:
 
 ```bash
-python3 scripts/validate_project.py
-node scripts/test_core.js
-node scripts/test_trustcheck.js
-node scripts/test_accessibility_i18n.js
-node scripts/test_resource_verification.js
+code .
 ```
 
-## 22. Instalação rápida no macOS
+## 42. Instalação rápida no macOS
 
-Com Homebrew instalado:
+Com Homebrew:
 
 ```bash
 brew install git python node
@@ -672,100 +857,84 @@ mkdir -p ~/GitHub
 cd ~/GitHub
 git clone https://github.com/H4ckD4d/CrisisTrust.git
 cd CrisisTrust
+python3 scripts/validate_project.py
 python3 scripts/serve_local.py
 ```
 
-Abra:
+Abra no VS Code:
 
-```text
-http://127.0.0.1:8771
+```bash
+code .
 ```
 
-## 23. Estrutura básica do projeto
+## 43. Checklist de homologação
 
 ```text
-CrisisTrust/
-├── docs/       documentação técnica
-├── examples/   dados sintéticos de demonstração
-├── schemas/    contratos JSON do protocolo
-├── scripts/    servidor, validadores e testes
-├── web/        interface local
-├── README.md
-├── ROADMAP.md
-└── SECURITY.md
-```
-
-## 24. Como saber se está tudo funcionando
-
-Checklist mínimo:
-
-```text
-[ ] git --version funciona
-[ ] python --version funciona
-[ ] python scripts/serve_local.py inicia sem erro
-[ ] http://127.0.0.1:8771 abre
-[ ] cabeçalho mostra CrisisTrust v0.4
-[ ] Português (Brasil) muda a interface
-[ ] Load synthetic demo funciona
-[ ] TrustCheck produz unresolved/conflicting conforme os testes
-[ ] tradução complementar mantém o original visível
-[ ] /resources.html abre
-[ ] python scripts/validate_project.py passa
+[ ] Git funciona
+[ ] Python funciona
+[ ] Node funciona
+[ ] VS Code abre o repositório
+[ ] pasta não está em Restricted Mode
+[ ] validate_project.py passa
+[ ] servidor abre em 127.0.0.1:8771
+[ ] cabeçalho mostra v0.4
+[ ] Português (Brasil) altera a interface
+[ ] demo sintético carrega
+[ ] tradução preserva o original
+[ ] TrustCheck produz estados coerentes
+[ ] resources.html abre
 [ ] testes Node passam
+[ ] git status está limpo antes de editar
 ```
 
-## 25. Segurança e privacidade
+## 44. Checklist de diagnóstico rápido
 
-O cliente de referência foi projetado para execução local e não deve ser interpretado como substituto para autoridades ou serviços de emergência.
-
-Por padrão, ele não deve depender de:
-
-- analytics;
-- advertising SDKs;
-- cookies;
-- armazenamento automático no navegador;
-- localização em segundo plano;
-- scripts externos em runtime;
-- tradução automática online;
-- coleta de biometria.
-
-Ao testar ou contribuir, use os fixtures sintéticos existentes e evite colocar dados pessoais reais no repositório.
-
-## 26. Como contribuir
-
-Antes de alterar o código, leia:
+Se a interface não abre:
 
 ```text
-CONTRIBUTING.md
-DEVELOPERS.md
-SECURITY.md
-ROADMAP.md
+1. O servidor está rodando?
+2. O terminal mostra 127.0.0.1:8771?
+3. A porta está livre?
+4. Você abriu http://127.0.0.1:8771?
 ```
 
-Fluxo recomendado:
+Se a interface parece antiga:
 
 ```text
-Issue
-  ↓
-Branch
-  ↓
-Commits
-  ↓
-Pull Request
-  ↓
-CI / testes
-  ↓
-Review
-  ↓
-Merge
+1. Ctrl+C
+2. git pull
+3. python scripts\serve_local.py
+4. Ctrl+F5
 ```
 
-Contribuições profissionais de desenvolvimento, acessibilidade, localização, tecnologia humanitária, QA, documentação e revisão de protocolo são bem-vindas.
+Se GitHub não responde:
+
+```text
+1. Resolve-DnsName github.com
+2. Test-NetConnection github.com -Port 443
+3. ipconfig /flushdns
+4. git pull
+```
+
+Se Git `log` falha:
+
+```text
+git --no-pager log -1 --oneline
+```
+
+## 45. Segurança operacional
+
+O CrisisTrust é um projeto em desenvolvimento. Os exemplos e fixtures são sintéticos.
+
+Não use conteúdo de demonstração como instrução real de emergência. Em uma crise real, siga fontes oficiais e serviços de emergência da sua região.
+
+O cliente de referência não substitui autoridades, operadores humanitários ou serviços de emergência.
 
 ---
 
 **Chris Cruz | h4ckd4d**  
-Original creator, project owner, and primary maintainer
+Cybersecurity • Red Team • Advanced Cyber Defense & Intelligence  
+OSCP | CEH | CISSP | MITRE ATT&CK® Contributor
 
 **Founder — Project h4ckd4d**  
 Technology for Child Protection • OSINT • Threat Intelligence
