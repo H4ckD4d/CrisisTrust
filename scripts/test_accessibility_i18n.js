@@ -120,6 +120,7 @@ assert.strictEqual(translatedHeading.textContent, "Acessibilidade e idioma");
 assert.ok(announcer.textContent.includes("sessão do navegador"));
 
 const html = fs.readFileSync(path.join(root, "web/index.html"), "utf8");
+assert.ok(html.includes("PROJECT h4ckd4d · CRISISTRUST v0.4"), "dashboard header must identify CrisisTrust v0.4");
 for (const required of [
   'id="languageSelect"',
   'id="highContrastToggle"',
