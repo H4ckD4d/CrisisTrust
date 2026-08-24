@@ -19,6 +19,12 @@
     es: "Revise la fuente. Lea la instrucción original. Si una solicitud personal es urgente, confírmela por otro canal confiable antes de actuar. La traducción ayuda a entender el mensaje, pero el texto original de la fuente permanece visible."
   });
 
+  const simpleLanguageLabels = Object.freeze({
+    en: { control: "Simple-language companion", heading: "Plain-language companion" },
+    "pt-BR": { control: "Explicação em linguagem simples", heading: "Explicação em linguagem simples" },
+    es: { control: "Explicación en lenguaje claro", heading: "Explicación en lenguaje claro" }
+  });
+
   function applyPreference(doc, preference, enabled) {
     const className = classMap[preference];
     if (!doc || !className) return false;
@@ -29,11 +35,16 @@
   function updateSimpleLanguage(doc, enabled) {
     const panel = doc?.getElementById("simpleLanguageCompanion");
     const text = doc?.getElementById("simpleLanguageText");
+    const label = doc?.getElementById("simpleLanguageLabel");
+    const heading = doc?.getElementById("simpleLanguageHeading");
     if (!panel || !text) return;
-    panel.hidden = !enabled;
     const language = root.CrisisTrustI18n ? root.CrisisTrustI18n.currentLanguage() : "en";
+    const labels = simpleLanguageLabels[language] || simpleLanguageLabels.en;
+    panel.hidden = !enabled;
     text.lang = language;
     text.textContent = simpleLanguageText[language] || simpleLanguageText.en;
+    if (label) label.textContent = labels.control;
+    if (heading) heading.textContent = labels.heading;
   }
 
   function attach(doc) {
@@ -78,7 +89,7 @@
     updateSimpleLanguage(doc, Boolean(simpleLanguage?.checked));
   }
 
-  return Object.freeze({ classMap, simpleLanguageText, applyPreference, updateSimpleLanguage, attach });
+  return Object.freeze({ classMap, simpleLanguageText, simpleLanguageLabels, applyPreference, updateSimpleLanguage, attach });
 });
 
 if (typeof document !== "undefined") {
