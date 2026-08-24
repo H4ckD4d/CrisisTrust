@@ -1,20 +1,21 @@
-# CrisisTrust Protocol v0.1
+# CrisisTrust Protocol v0.2
 
 **Status:** Alpha draft  
 **Project owner:** Chris Cruz | h4ckd4d
 
 ## Purpose
 
-The CrisisTrust Protocol defines a small set of interoperable safety records that can be implemented by different clients without requiring a centralized vendor.
+The CrisisTrust Protocol defines interoperable safety records that can be implemented by different clients without requiring a centralized vendor.
 
 ## Record types
 
-v0.1 defines four record types:
+v0.2 defines five record types:
 
 1. `alert-envelope`
 2. `action-card`
 3. `checkin`
 4. `community-resource`
+5. `trustcheck-case`
 
 Each type has a JSON Schema under `schemas/`.
 
@@ -112,14 +113,68 @@ Required concepts:
 - last verification time when available;
 - availability note.
 
+## 5. TrustCheck case
+
+A TrustCheck case records the verification process for an urgent claim without requiring personal contact details, private-message contents, biometric data, or the prearranged secret itself.
+
+Required concepts:
+
+```text
+record_type = trustcheck-case
+protocol_version = 0.2
+case_id
+claim_type
+received_at
+requested_action
+verification_state
+channels[]
+challenge
+trusted_circle[]
+```
+
+Verification states are:
+
+- `unreviewed`;
+- `verifying`;
+- `verified-by-process`;
+- `unresolved`;
+- `conflicting`;
+- `cancelled`.
+
+### TrustCheck rule
+
+`verified-by-process` requires:
+
+1. confirmation through at least one independently initiated known or official channel;
+2. a second trusted corroboration from either a prearranged challenge or Trusted Circle confirmation;
+3. no material denial or failed prearranged challenge.
+
+Conflicting evidence must not be averaged away.
+
+### Signals that do not authenticate by themselves
+
+The protocol does not treat these as sufficient identity proof:
+
+- familiar voice;
+- caller ID;
+- display name;
+- profile photograph;
+- urgency or emotional pressure;
+- public personal facts;
+- AI-generated identity confidence.
+
+See [`trustcheck.md`](trustcheck.md).
+
 ## Versioning
 
 Protocol versions use semantic milestone numbering during incubation:
 
 ```text
-0.1 — foundation
-0.2 — signed provenance / TrustCheck research
-0.3 — offline synchronization draft
+0.1 — alert/provenance foundation
+0.2 — TrustCheck anti-impersonation workflow
+0.3 — accessibility and multilingual profile
+0.4 — community-resource verification profile
+0.5 — offline synchronization draft
 1.0 — stable interoperability contract
 ```
 
@@ -131,18 +186,22 @@ Implementations may add namespaced extension objects, but must not redefine the 
 
 ## Privacy policy
 
-A compliant v0.1 client should not require:
+A compliant reference client should not require:
 
 - precise personal GPS history;
 - advertising identifiers;
 - device fingerprinting;
 - private messages;
 - credentials;
+- payment details;
+- recovery codes;
+- voice recordings;
+- face images;
 - biometric identity inference.
 
 ## Safety policy
 
-CrisisTrust records are informational and coordination primitives. They do not replace emergency authorities, emergency services, or professional instructions.
+CrisisTrust records are informational and coordination primitives. They do not replace emergency authorities, emergency services, professional instructions, identity-assurance systems, or payment authorization.
 
 ---
 

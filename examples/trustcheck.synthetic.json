@@ -1,0 +1,31 @@
+{
+  "record_type": "trustcheck-case",
+  "protocol_version": "0.2",
+  "case_id": "CT-TRUST-DEMO-0001",
+  "claim_type": "family-emergency",
+  "subject_alias": "Trusted family member",
+  "claim_summary": "Synthetic urgent family request used only to test the TrustCheck workflow.",
+  "received_at": "2026-08-23T21:00:00Z",
+  "requested_action": "transfer-money",
+  "verification_state": "verifying",
+  "channels": [
+    {
+      "channel_id": "known-channel-1",
+      "channel_type": "known-phone",
+      "independently_initiated": true,
+      "result": "confirmed",
+      "note": "Synthetic confirmation. No real phone number is stored."
+    }
+  ],
+  "challenge": {
+    "was_prearranged": true,
+    "result": "passed"
+  },
+  "trusted_circle": [
+    {
+      "alias": "Trusted contact A",
+      "result": "confirmed"
+    }
+  ],
+  "decision_note": "Synthetic fixture only."
+}

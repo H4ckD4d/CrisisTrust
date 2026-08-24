@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://crisistrust.example/schemas/trustcheck-case.schema.json",
+  "title": "CrisisTrust TrustCheck Case",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_type",
+    "protocol_version",
+    "case_id",
+    "claim_type",
+    "received_at",
+    "requested_action",
+    "verification_state",
+    "channels",
+    "challenge",
+    "trusted_circle"
+  ],
+  "properties": {
+    "record_type": {"const": "trustcheck-case"},
+    "protocol_version": {"const": "0.2"},
+    "case_id": {"type": "string", "minLength": 3},
+    "claim_type": {
+      "enum": ["family-emergency", "urgent-financial-request", "account-security-warning", "other"]
+    },
+    "subject_alias": {"type": "string", "maxLength": 80},
+    "claim_summary": {"type": "string", "maxLength": 500},
+    "received_at": {"type": "string", "format": "date-time"},
+    "requested_action": {
+      "enum": ["none", "call-back", "transfer-money", "share-secret", "travel", "other"]
+    },
+    "verification_state": {
+      "enum": ["unreviewed", "verifying", "verified-by-process", "unresolved", "conflicting", "cancelled"]
+    },
+    "channels": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["channel_id", "channel_type", "independently_initiated", "result"],
+        "properties": {
+          "channel_id": {"type": "string", "minLength": 1},
+          "channel_type": {
+            "enum": ["known-phone", "known-messaging", "known-email", "in-person", "official-channel", "other"]
+          },
+          "independently_initiated": {"type": "boolean"},
+          "result": {"enum": ["confirmed", "denied", "no-response", "not-checked"]},
+          "note": {"type": "string", "maxLength": 240}
+        }
+      }
+    },
+    "challenge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["was_prearranged", "result"],
+      "properties": {
+        "was_prearranged": {"type": "boolean"},
+        "result": {"enum": ["passed", "failed", "not-used"]}
+      }
+    },
+    "trusted_circle": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["alias", "result"],
+        "properties": {
+          "alias": {"type": "string", "minLength": 1, "maxLength": 80},
+          "result": {"enum": ["confirmed", "denied", "unavailable", "not-asked"]}
+        }
+      }
+    },
+    "decision_note": {"type": "string", "maxLength": 500}
+  }
+}

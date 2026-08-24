@@ -6,22 +6,20 @@
 
 ### Added
 
-- CrisisTrust project foundation and human-safety principles.
-- CAP 1.2 interoperability strategy.
-- Provenance and integrity trust model.
-- Privacy/security threat model.
-- CrisisTrust Protocol v0.1 draft.
-- JSON Schemas for alerts, Action Cards, check-ins, and community resources.
-- Synthetic fixtures for alert, trusted-circle, and community-resource testing.
-- Local-first reference web MVP.
-- Source provenance, integrity, freshness, Action Card, Trusted Circle, and resource rendering.
-- Protocol core tests and privacy/structure validator.
-- GitHub Actions validation workflow.
-- Professional contribution, security, and developer onboarding documents.
+- TrustCheck v0.2 anti-impersonation verification workflow.
+- Independent-channel verification semantics.
+- `verified-by-process`, `unresolved`, `conflicting`, and `cancelled` outcomes.
+- Prearranged-challenge result model that never stores the secret itself.
+- Trusted Circle corroboration model.
+- High-consequence action warnings for money, secrets, travel, and account-security requests.
+- TrustCheck JSON Schema and synthetic fixture.
+- Reusable TrustCheck browser/Node engine.
+- TrustCheck dashboard integration and responsive styling.
+- Automated TrustCheck tests and privacy validation coverage.
 
 ## [0.1.0-alpha.1] - 2026-08-23
 
-Initial milestone for the CrisisTrust protocol and local MVP.
+Initial milestone for the CrisisTrust protocol and local MVP, including CAP interoperability strategy, provenance/integrity semantics, Action Cards, Trusted Circle check-ins, community resources, privacy validation, and CI.
 
 ---
 
