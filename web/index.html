@@ -41,8 +41,16 @@
         <label><input id="largeTextToggle" type="checkbox"><span data-i18n="controls.largeText">Larger text</span></label>
         <label><input id="reducedMotionToggle" type="checkbox"><span data-i18n="controls.reducedMotion">Reduced motion</span></label>
         <label><input id="lowBandwidthToggle" type="checkbox"><span data-i18n="controls.lowBandwidth">Low-bandwidth mode</span></label>
+        <label><input id="simpleLanguageToggle" type="checkbox"><span id="simpleLanguageLabel">Simple-language companion</span></label>
       </div>
       <div id="accessibilityStatus" class="sr-only" role="status" aria-live="polite"></div>
+    </section>
+
+    <section id="simpleLanguageCompanion" class="panel" aria-labelledby="simpleLanguageHeading" hidden>
+      <p class="eyebrow">Plain language</p>
+      <h2 id="simpleLanguageHeading">Plain-language companion</h2>
+      <p id="simpleLanguageText" class="muted"></p>
+      <p class="muted"><strong>Original source instructions remain unchanged.</strong></p>
     </section>
 
     <section class="notice" aria-labelledby="boundary-title">
@@ -126,60 +134,16 @@
       <p class="muted" data-i18n="trustcheck.help">This local workflow does not ask for names, phone numbers, private messages, voice recordings, passwords, recovery codes, payment details, or precise location. Voice, caller ID, profile photos, and emotional pressure are not authentication.</p>
 
       <div class="trustcheck-grid">
-        <label>
-          <span data-i18n="trustcheck.claim">Claim type</span>
-          <select id="trustClaimType">
-            <option value="family-emergency">Family emergency</option>
-            <option value="urgent-financial-request">Urgent financial request</option>
-            <option value="account-security-warning">Account-security warning</option>
-            <option value="other">Other urgent claim</option>
-          </select>
-        </label>
-        <label>
-          <span data-i18n="trustcheck.action">Requested action</span>
-          <select id="trustRequestedAction">
-            <option value="none">None</option>
-            <option value="call-back">Call back</option>
-            <option value="transfer-money">Transfer money</option>
-            <option value="share-secret">Share a secret or code</option>
-            <option value="travel">Travel</option>
-            <option value="other">Other</option>
-          </select>
-        </label>
-        <label>
-          <span data-i18n="trustcheck.channel">Independent channel you initiated</span>
-          <select id="trustIndependentResult">
-            <option value="not-checked">Not checked</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="denied">Denied</option>
-            <option value="no-response">No response</option>
-          </select>
-        </label>
-        <label>
-          <span data-i18n="trustcheck.challenge">Prearranged challenge</span>
-          <select id="trustChallengeResult">
-            <option value="not-used">Not used</option>
-            <option value="passed">Passed</option>
-            <option value="failed">Failed</option>
-          </select>
-        </label>
-        <label>
-          <span data-i18n="trustcheck.circle">Trusted Circle corroboration</span>
-          <select id="trustCircleResult">
-            <option value="not-asked">Not asked</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="denied">Denied</option>
-            <option value="unavailable">Unavailable</option>
-          </select>
-        </label>
+        <label><span data-i18n="trustcheck.claim">Claim type</span><select id="trustClaimType"><option value="family-emergency">Family emergency</option><option value="urgent-financial-request">Urgent financial request</option><option value="account-security-warning">Account-security warning</option><option value="other">Other urgent claim</option></select></label>
+        <label><span data-i18n="trustcheck.action">Requested action</span><select id="trustRequestedAction"><option value="none">None</option><option value="call-back">Call back</option><option value="transfer-money">Transfer money</option><option value="share-secret">Share a secret or code</option><option value="travel">Travel</option><option value="other">Other</option></select></label>
+        <label><span data-i18n="trustcheck.channel">Independent channel you initiated</span><select id="trustIndependentResult"><option value="not-checked">Not checked</option><option value="confirmed">Confirmed</option><option value="denied">Denied</option><option value="no-response">No response</option></select></label>
+        <label><span data-i18n="trustcheck.challenge">Prearranged challenge</span><select id="trustChallengeResult"><option value="not-used">Not used</option><option value="passed">Passed</option><option value="failed">Failed</option></select></label>
+        <label><span data-i18n="trustcheck.circle">Trusted Circle corroboration</span><select id="trustCircleResult"><option value="not-asked">Not asked</option><option value="confirmed">Confirmed</option><option value="denied">Denied</option><option value="unavailable">Unavailable</option></select></label>
       </div>
 
       <button id="trustEvaluate" class="button" type="button" data-i18n="trustcheck.evaluate">Evaluate verification state</button>
       <div class="trustcheck-output" aria-live="polite">
-        <div>
-          <span data-i18n="trustcheck.state">Verification state</span>
-          <strong id="trustCheckResult" class="trustcheck-result" data-i18n="trustcheck.notEvaluated">not evaluated</strong>
-        </div>
+        <div><span data-i18n="trustcheck.state">Verification state</span><strong id="trustCheckResult" class="trustcheck-result" data-i18n="trustcheck.notEvaluated">not evaluated</strong></div>
         <p id="trustCheckReason" data-i18n="trustcheck.initialReason">Use an independent channel and trusted corroboration before relying on an urgent claim.</p>
         <p id="trustCheckConsequence" class="muted" data-i18n="trustcheck.initialAction">No requested action evaluated.</p>
       </div>
@@ -188,13 +152,7 @@
 
     <section class="dashboard-grid">
       <article class="panel" aria-labelledby="circle-title">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow" data-i18n="circle.eyebrow">Trusted Circle</p>
-            <h2 id="circle-title" data-i18n="circle.title">Minimal check-in board</h2>
-          </div>
-          <button id="resetCircle" class="text-button" type="button" data-i18n="circle.reset">Reset session</button>
-        </div>
+        <div class="section-heading"><div><p class="eyebrow" data-i18n="circle.eyebrow">Trusted Circle</p><h2 id="circle-title" data-i18n="circle.title">Minimal check-in board</h2></div><button id="resetCircle" class="text-button" type="button" data-i18n="circle.reset">Reset session</button></div>
         <p class="muted" data-i18n="circle.help">Aliases and statuses exist only in the active page. CrisisTrust does not require precise personal location.</p>
         <div id="circleBoard" class="circle-board"></div>
       </article>
@@ -220,12 +178,7 @@
   </main>
 
   <footer>
-    <div class="signature">
-      <strong>Chris Cruz | h4ckd4d</strong>
-      <span data-i18n="footer.owner">Original creator, project owner, and primary maintainer</span>
-      <span class="founder">Founder — Project h4ckd4d</span>
-      <em>“Protect. Detect. Defend.”</em>
-    </div>
+    <div class="signature"><strong>Chris Cruz | h4ckd4d</strong><span data-i18n="footer.owner">Original creator, project owner, and primary maintainer</span><span class="founder">Founder — Project h4ckd4d</span><em>“Protect. Detect. Defend.”</em></div>
     <p data-i18n="footer.invite">Developers, CAP implementers, humanitarian technologists, accessibility specialists, privacy engineers, disaster-risk practitioners, anti-fraud researchers, QA engineers, translators, and technical writers are invited to contribute professionally.</p>
   </footer>
 
