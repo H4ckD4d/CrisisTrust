@@ -6,6 +6,7 @@ No network access is performed.
 
 from __future__ import annotations
 
+import html as html_lib
 import json
 from pathlib import Path
 import re
@@ -219,6 +220,7 @@ def main() -> int:
                 errors.append(f"web/{filename} contains forbidden network/persistence token: {token}")
 
     html = web_text.get("index.html", "")
+    html_visible = html_lib.unescape(html)
     for required_text in [
         "Provenance is not a truth oracle",
         "Local session only",
@@ -234,7 +236,7 @@ def main() -> int:
         "translation-record",
         "WCAG 2.2",
     ]:
-        if required_text.lower() not in html.lower():
+        if required_text.lower() not in html_visible.lower():
             errors.append(f"web/index.html missing required safety/accessibility/branding text: {required_text}")
 
     if html.count("data-i18n=") < 30:
