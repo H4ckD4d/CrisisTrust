@@ -2,7 +2,7 @@ name: CrisisTrust Validation
 
 on:
   push:
-    branches: [main, crisistrust-v0.3-accessibility-multilingual]
+    branches: [main, crisistrust-v0.4-community-resource-verification]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -38,6 +38,9 @@ jobs:
 
       - name: Test accessibility, i18n, and translation safety
         run: node scripts/test_accessibility_i18n.js
+
+      - name: Test community resource verification engine
+        run: node scripts/test_resource_verification.js
 
   documentation-quality:
     runs-on: ubuntu-latest
